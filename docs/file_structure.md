@@ -11,6 +11,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 - `tests/` — All pytest-based tests for business logic and modules.
     - `__init__.py` — Ensures the directory is recognized as a Python package.
 - `docs/` — Project documentation (including this file, codebase overview, PRD, and tasks).
+- `requirements.txt` — Python dependency manifest listing all required third-party packages for the project. Must include only minimal, necessary dependencies as per PRD and codebase policy.
 
 ## Notes
 - Each directory contains a placeholder file to ensure it is tracked in version control.

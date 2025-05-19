@@ -10,6 +10,7 @@ See docs/file_structure.md for a detailed directory and file listing.
 - **configs/**: Contains configuration files (YAML, JSON, etc.) for strategies, data sources, and environment settings. See configs/README.md for details.
 - **tests/**: Contains all pytest-based tests for business logic and modules. Each test module should correspond to a module in src/.
 - **docs/**: Contains all project documentation, including this overview, file structure, PRD, and task tracking.
+- **requirements.txt**: Python dependency manifest at the project root. Lists all required third-party packages (pandas, numpy, yfinance, pyyaml) and must remain minimal as per project policy.
 
 ## Documentation Policy
 - All code changes must be reflected in this file and docs/file_structure.md.
