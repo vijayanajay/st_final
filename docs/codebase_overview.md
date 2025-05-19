@@ -96,4 +96,31 @@ print(vol)
 **Testing:**
 - Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for all three functions.
 
----
+## config_parser.py
+
+**Location:** src/config_parser.py
+
+**Purpose:**
+Loads and validates YAML configuration files for trading strategies. Ensures all required fields are present and the configuration is properly formatted.
+
+**Key Function:**
+- `load_config(path: str) -> dict`
+    - **path**: Path to the YAML config file.
+    - **Returns**: Dict containing the parsed configuration.
+    - **Raises**: FileNotFoundError if the file does not exist, ValueError if YAML is invalid or required fields are missing.
+    - **Logging**: Logs errors for missing files, invalid YAML, and missing required fields. All log messages use standard error types for testability and observability.
+
+**Example Usage:**
+```python
+from src import config_parser
+
+try:
+    config = config_parser.load_config('configs/strategies/sma_cross.yaml')
+    print(config)
+except (FileNotFoundError, ValueError) as e:
+    print(f"Error: {e}")
+```
+
+**Testing:**
+- Unit tests in `tests/test_config_parser.py` cover loading valid configs, handling missing files, handling invalid YAML, and handling missing required fields.
+- Tests verify both function behavior and appropriate logging of events using pytest's `caplog` fixture.

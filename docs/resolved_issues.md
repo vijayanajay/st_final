@@ -15,3 +15,11 @@
 - **Reopen Count:** 0
 
 ---
+
+### TEST-002: Test Log Capture Method
+- **Status:** RESOLVED
+- **Resolution Summary:** As of 2025-05-20, tests now properly access individual log records via `caplog.records` and check message attributes for expected substrings. Documentation has been added to `docs/src/config_parser.py.md` about the proper way to capture and assert log messages in tests.
+- **Date Resolved:** 2025-05-20
+- **Reopen Count:** 0
+
+---
