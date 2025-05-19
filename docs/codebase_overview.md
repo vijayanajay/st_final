@@ -71,20 +71,29 @@ Provides feature engineering utilities for stock trading strategies, currently i
     - **Returns**: Series containing the 1-day price change percentage, named as 'price_change_pct_1d'.
     - **Raises**: ValueError if the column does not exist or is not numeric.
     - **Logging**: Structured logging is implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
+- `calculate_volatility(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series`
+    - **df**: Input DataFrame containing price data.
+    - **column**: Name of the column to calculate volatility on. Defaults to 'close'.
+    - **window**: Window size for the rolling standard deviation. Must be > 0.
+    - **Returns**: Series containing the rolling volatility, named as 'volatility_{window}'.
+    - **Raises**: ValueError if the column does not exist, is not numeric, or window is invalid.
+    - **Logging**: Structured logging is implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
 
 **Example Usage:**
 ```python
-from src.feature_generator import calculate_sma, calculate_price_change_pct
+from src.feature_generator import calculate_sma, calculate_price_change_pct, calculate_volatility
 import pandas as pd
 
 df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
 sma = calculate_sma(df, column='close', window=3)
 pct = calculate_price_change_pct(df, column='close')
+vol = calculate_volatility(df, column='close', window=3)
 print(sma)
 print(pct)
+print(vol)
 ```
 
 **Testing:**
-- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for both functions.
+- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for all three functions.
 
 ---

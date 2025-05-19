@@ -58,3 +58,36 @@ def calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Se
     pct = (df[column] - df[column].shift(1)) / df[column].shift(1) * 100
     pct.name = 'price_change_pct_1d'
     return pct
+
+def calculate_volatility(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series:
+    """
+    Calculate the rolling standard deviation (volatility) of 1-day price change percentage for a given column.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame containing price data.
+        column (str): Name of the column to calculate volatility on. Defaults to 'close'.
+        window (int): Window size for the rolling standard deviation. Must be > 0.
+
+    Returns:
+        pd.Series: Series containing the rolling volatility, named as 'volatility_{window}'.
+
+    Raises:
+        ValueError: If the column does not exist, is not numeric, or window is invalid.
+    """
+    if not isinstance(df, pd.DataFrame):
+        logging.error("Input must be a pandas DataFrame.")
+        raise ValueError("Input must be a pandas DataFrame.")
+    if column not in df.columns:
+        logging.error(f"Column '{column}' not found in DataFrame.")
+        raise ValueError(f"Column '{column}' not found in DataFrame.")
+    if not pd.api.types.is_numeric_dtype(df[column]):
+        logging.error(f"Column '{column}' must be numeric.")
+        raise ValueError(f"Column '{column}' must be numeric.")
+    if not isinstance(window, int) or window <= 0:
+        logging.error("Window size must be a positive integer.")
+        raise ValueError("Window size must be a positive integer.")
+    logging.info(f"Calculating volatility: column={column}, window={window}")
+    price_change = (df[column] - df[column].shift(1)) / df[column].shift(1) * 100
+    volatility = price_change.rolling(window=window, min_periods=window).std()
+    volatility.name = f'volatility_{window}'
+    return volatility
