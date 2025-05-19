@@ -30,3 +30,31 @@ def calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series:
     sma = df[column].rolling(window=window, min_periods=window).mean()
     sma.name = f'sma_{window}'
     return sma
+
+def calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Series:
+    """
+    Calculate the 1-day price change percentage for a given column in a DataFrame.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame containing price data.
+        column (str): Name of the column to calculate price change percentage on. Defaults to 'close'.
+
+    Returns:
+        pd.Series: Series containing the 1-day price change percentage, named as 'price_change_pct_1d'.
+
+    Raises:
+        ValueError: If the column does not exist or is not numeric.
+    """
+    if not isinstance(df, pd.DataFrame):
+        logging.error("Input must be a pandas DataFrame.")
+        raise ValueError("Input must be a pandas DataFrame.")
+    if column not in df.columns:
+        logging.error(f"Column '{column}' not found in DataFrame.")
+        raise ValueError(f"Column '{column}' not found in DataFrame.")
+    if not pd.api.types.is_numeric_dtype(df[column]):
+        logging.error(f"Column '{column}' must be numeric.")
+        raise ValueError(f"Column '{column}' must be numeric.")
+    logging.info(f"Calculating 1-day price change percentage: column={column}")
+    pct = (df[column] - df[column].shift(1)) / df[column].shift(1) * 100
+    pct.name = 'price_change_pct_1d'
+    return pct

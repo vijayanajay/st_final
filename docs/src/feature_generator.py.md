@@ -42,3 +42,40 @@ df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
 sma = calculate_sma(df, column='close', window=3)
 print(sma)
 ```
+
+---
+
+### calculate_price_change_pct
+
+**Signature:**
+```python
+def calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Series:
+```
+
+**Description:**
+Calculates the 1-day price change percentage for a specified column in a pandas DataFrame. The result is `(current - previous) / previous * 100` for each row.
+
+**Parameters:**
+- `df` (pd.DataFrame): Input DataFrame containing price data.
+- `column` (str, optional): Name of the column to calculate price change percentage on. Defaults to 'close'.
+
+**Returns:**
+- `pd.Series`: Series containing the 1-day price change percentage, named as 'price_change_pct_1d'.
+
+**Raises:**
+- `ValueError`: If the column does not exist or is not numeric.
+
+**Notes:**
+- Input validation and error handling are performed, with structured logging for all error conditions and critical operations (see code for logging details).
+- Logging is handled using the standard library `logging` module, with configuration centralized in `configs/logging_config.py`.
+- The function is tested in `tests/test_feature_generator.py`.
+
+**Example:**
+```python
+import pandas as pd
+from src.feature_generator import calculate_price_change_pct
+
+df = pd.DataFrame({'close': [10, 12, 15, 15, 10]})
+pct = calculate_price_change_pct(df, column='close')
+print(pct)
+```

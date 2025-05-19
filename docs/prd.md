@@ -135,4 +135,5 @@ Then, the user simply executes `python main.py`.
 *   Any form of GUI or sophisticated CLI.
 *   Database integration.
 *   Use of external TA libraries (e.g., TA-Lib).
+*   Enforce Documentation-Code Synchronization via CI/Pre-Commit and Enforce File Size Limits via CI/Pre-Commit
 

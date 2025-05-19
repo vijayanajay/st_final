@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 7  
-**Remaining**: 23  
-**Progress**: 23%
+**Completed**: 8  
+**Remaining**: 22  
+**Progress**: 27%
 
 ## Tasks
 
@@ -23,7 +23,7 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ### Feature Generation Module (1/4)
 7. [x] **Create feature_generator.py with SMA calculation** - Implement function to calculate Simple Moving Averages
-8. [ ] **Add price change percentage calculation** - Implement function for 1-day price change percentage
+8. [x] **Add price change percentage calculation** - Implement function for 1-day price change percentage
 9. [ ] **Add volatility calculation** - Implement rolling standard deviation of price changes
 10. [ ] **Write tests for feature_generator.py** - Create pytest tests for feature calculations
 

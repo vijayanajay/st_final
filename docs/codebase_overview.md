@@ -55,28 +55,36 @@ print(df.head())
 **Location:** src/feature_generator.py
 
 **Purpose:**
-Provides feature engineering utilities for stock trading strategies, currently including calculation of Simple Moving Averages (SMA) with robust input validation and error handling. Logging is handled generically at the application level; this module does not emit log messages directly.
+Provides feature engineering utilities for stock trading strategies, currently including calculation of Simple Moving Averages (SMA) and 1-day price change percentage (see `calculate_price_change_pct`) with robust input validation and error handling. Logging is handled generically at the application level; this module emits structured log messages for all error conditions and critical operations.
 
-**Key Function:**
+**Key Functions:**
 - `calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series`
     - **df**: Input DataFrame containing price data.
     - **column**: Name of the column to calculate SMA on.
     - **window**: Window size for the moving average. Must be > 0.
     - **Returns**: Series containing the SMA values, named as 'sma_{window}'.
     - **Raises**: ValueError if the column does not exist or window is invalid.
-    - **Logging**: Structured logging is now implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
+    - **Logging**: Structured logging is implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
+- `calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Series`
+    - **df**: Input DataFrame containing price data.
+    - **column**: Name of the column to calculate price change percentage on. Defaults to 'close'.
+    - **Returns**: Series containing the 1-day price change percentage, named as 'price_change_pct_1d'.
+    - **Raises**: ValueError if the column does not exist or is not numeric.
+    - **Logging**: Structured logging is implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
 
 **Example Usage:**
 ```python
-from src.feature_generator import calculate_sma
+from src.feature_generator import calculate_sma, calculate_price_change_pct
 import pandas as pd
 
 df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
 sma = calculate_sma(df, column='close', window=3)
+pct = calculate_price_change_pct(df, column='close')
 print(sma)
+print(pct)
 ```
 
 **Testing:**
-- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard.
+- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for both functions.
 
 ---
