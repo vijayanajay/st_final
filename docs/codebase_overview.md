@@ -49,3 +49,34 @@ print(df.head())
 **Testing:**
 - Unit tests in `tests/test_data_loader.py` use mocks for yfinance.
 - Integration tests (recommended) should verify real API behavior (optionally skipped by default).
+
+## feature_generator.py
+
+**Location:** src/feature_generator.py
+
+**Purpose:**
+Provides feature engineering utilities for stock trading strategies, currently including calculation of Simple Moving Averages (SMA) with robust input validation and error handling. Logging is handled generically at the application level; this module does not emit log messages directly.
+
+**Key Function:**
+- `calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series`
+    - **df**: Input DataFrame containing price data.
+    - **column**: Name of the column to calculate SMA on.
+    - **window**: Window size for the moving average. Must be > 0.
+    - **Returns**: Series containing the SMA values, named as 'sma_{window}'.
+    - **Raises**: ValueError if the column does not exist or window is invalid.
+    - **Logging**: No direct logging; observability is achieved via the generic logging configuration at the application level.
+
+**Example Usage:**
+```python
+from src.feature_generator import calculate_sma
+import pandas as pd
+
+df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
+sma = calculate_sma(df, column='close', window=3)
+print(sma)
+```
+
+**Testing:**
+- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard.
+
+---
