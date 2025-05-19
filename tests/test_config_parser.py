@@ -49,3 +49,13 @@ def test_missing_required_fields(valid_yaml_file, caplog):
         config_parser.load_config(valid_yaml_file)
     # Access individual log records instead of using caplog.text
     assert any('missing required' in record.message.lower() for record in caplog.records)
+
+def test_load_sample_sma_cross_config():
+    path = os.path.join(os.path.dirname(__file__), '../configs/strategies/sma_cross.yaml')
+    path = os.path.abspath(path)
+    config = config_parser.load_config(path)
+    # The new config uses 'strategy_name' and 'parameters' keys
+    assert config['strategy_name'] == 'sma_crossover'
+    assert 'parameters' in config
+    assert config['parameters']['short_window'] == 20
+    assert config['parameters']['long_window'] == 50

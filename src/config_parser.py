@@ -29,10 +29,20 @@ def load_config(path: str) -> dict:
     if not isinstance(config, dict):
         logger.error(f"YAML structure error (yaml) in {path}: Top-level object is not a dictionary.")
         raise ValueError(f"YAML structure error in {path}: Top-level object is not a dictionary.")
+    # Support both legacy and new config structure
+    if 'strategy_name' in config and 'parameters' in config:
+        required_param_fields = {'short_window', 'long_window'}
+        missing = required_param_fields - set(config['parameters'].keys())
+        if missing:
+            logger.error(f"YAML validation error (missing required) in {path}: Missing required parameter fields: {missing}")
+            raise ValueError(f"YAML validation error in {path}: Missing required parameter fields: {missing}")
+        logger.info(f"Loaded config (new format) from {path} successfully.")
+        return config
+    # Legacy structure fallback
     required_fields = {'strategy', 'fast_window', 'slow_window'}
     missing = required_fields - set(config.keys())
     if missing:
         logger.error(f"YAML validation error (missing required) in {path}: Missing required fields: {missing}")
         raise ValueError(f"YAML validation error in {path}: Missing required fields: {missing}")
-    logger.info(f"Loaded config from {path} successfully.")
+    logger.info(f"Loaded config (legacy format) from {path} successfully.")
     return config

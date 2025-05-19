@@ -1,0 +1,4 @@
+strategy_name: sma_crossover
+parameters:
+  short_window: 20
+  long_window: 50

@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 12  
-**Remaining**: 18  
-**Progress**: 40%
+**Completed**: 13  
+**Remaining**: 17  
+**Progress**: 43%
 
 ## Tasks
 
@@ -27,9 +27,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 9. [x] **Add volatility calculation** - Implement rolling standard deviation of price changes
 10. [x] **Write tests for feature_generator.py** - Create pytest tests for feature calculations
 
-### Strategy Configuration (2/3)
+### Strategy Configuration (3/3)
 11. [x] **Create config parser utility** - Implement YAML config file parser (`src/config_parser.py`)
-12. [ ] **Create sample strategy config file** - Create sma_cross.yaml with configuration parameters
+12. [x] **Create sample strategy config file** - Create sma_cross.yaml with configuration parameters
 13. [x] **Write tests for config parsing** - Create pytest tests to verify config loading and parsing (see `tests/test_config_parser.py`).
 
 ### Strategy Implementation (0/4)
@@ -75,3 +75,4 @@ Each task is considered complete when:
 - Config parser utility and its tests are complete and fully documented.
 - Logging and testability for config parsing are now robust and standardized.
 - Documentation for `config_parser.py` and log testing approach added to `docs/`.
+- Sample SMA crossover strategy config (`configs/strategies/sma_cross.yaml`) created and supported by parser/tests.
