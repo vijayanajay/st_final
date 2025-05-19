@@ -29,8 +29,8 @@ Calculates the Simple Moving Average (SMA) for a specified column in a pandas Da
 - `ValueError`: If the column does not exist or window is invalid.
 
 **Notes:**
-- Input validation and error handling are performed.
-- Logging is handled generically at the application level; this function does not emit log messages directly.
+- Input validation and error handling are performed, with structured logging for all error conditions and critical operations (see code for logging details).
+- Logging is handled using the standard library `logging` module, with configuration centralized in `configs/logging_config.py`.
 - The function is tested in `tests/test_feature_generator.py`.
 
 **Example:**

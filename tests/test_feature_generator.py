@@ -38,8 +38,17 @@ def test_sma_nan_handling():
     pd.testing.assert_series_equal(result, expected)
 
 def test_sma_logging(sample_df, caplog):
-    # Under the new logging standard, calculate_sma should not emit any log messages directly.
+    # calculate_sma should emit log messages for info and errors
     with caplog.at_level('INFO'):
         calculate_sma(sample_df, column='close', window=2)
-    # Assert that no log messages were emitted by calculate_sma
-    assert not caplog.messages, "calculate_sma should not emit log messages directly under the generic logging standard."
+    assert any('Calculating SMA' in msg for msg in caplog.messages)
+
+    with caplog.at_level('ERROR'):
+        with pytest.raises(ValueError):
+            calculate_sma(sample_df, column='open', window=2)
+        assert any("not found in DataFrame" in msg for msg in caplog.messages)
+
+    with caplog.at_level('ERROR'):
+        with pytest.raises(ValueError):
+            calculate_sma(sample_df, column='close', window=0)
+        assert any("Window size must be a positive integer" in msg for msg in caplog.messages)

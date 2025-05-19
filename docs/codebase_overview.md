@@ -64,7 +64,7 @@ Provides feature engineering utilities for stock trading strategies, currently i
     - **window**: Window size for the moving average. Must be > 0.
     - **Returns**: Series containing the SMA values, named as 'sma_{window}'.
     - **Raises**: ValueError if the column does not exist or window is invalid.
-    - **Logging**: No direct logging; observability is achieved via the generic logging configuration at the application level.
+    - **Logging**: Structured logging is now implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
 
 **Example Usage:**
 ```python
