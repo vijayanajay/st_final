@@ -100,6 +100,32 @@ def test_fetch_handles_empty_data(monkeypatch):
     with pytest.raises(ValueError):
         data_loader.fetch('RELIANCE.NS', period='1y', use_cache=False)
 
+def test_fetch_all_nan_column(monkeypatch, caplog):
+    data_loader._cached_fetch_data.cache_clear()
+    class DummyTickerAllNaN:
+        def __init__(self, ticker): pass
+        def history(self, period=None):
+            return pd.DataFrame({
+                'Open': [float('nan')],
+                'High': [1.1],
+                'Low': [0.9],
+                'Close': [1.05],
+                'Volume': [1000]
+            })
+    monkeypatch.setattr(yfinance, 'Ticker', DummyTickerAllNaN)
+    with caplog.at_level('WARNING'):
+        with pytest.raises(ValueError):
+            data_loader.fetch('RELIANCE.NS', period='1y', columns=['Open', 'High', 'Low', 'Close', 'Volume'], use_cache=False)
+        assert 'all-NaN' in caplog.text
+
+def test_fetch_logs_error_on_invalid_input(monkeypatch, caplog):
+    data_loader._cached_fetch_data.cache_clear()
+    monkeypatch.setattr(yfinance, 'Ticker', DummyTicker)
+    with caplog.at_level('ERROR'):
+        with pytest.raises(ValueError):
+            data_loader.fetch('', period='1y')
+        assert 'Ticker' in caplog.text
+
 @pytest.mark.skip(reason="Integration test: requires network and real API")
 def test_fetch_integration_real_api():
     data_loader._cached_fetch_data.cache_clear()

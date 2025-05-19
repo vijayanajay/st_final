@@ -14,10 +14,12 @@ except ImportError:
 
 def validate_ticker(ticker: str) -> None:
     if not ticker or not isinstance(ticker, str):
+        logging.error("Ticker must be a non-empty string.")
         raise ValueError("Ticker must be a non-empty string.")
 
 def validate_period(period: str) -> None:
     if not period or not isinstance(period, str):
+        logging.error("Period must be a non-empty string.")
         raise ValueError("Period must be a non-empty string.")
 
 def validate_columns(data: pd.DataFrame, required_cols: List[str]) -> None:
@@ -25,6 +27,11 @@ def validate_columns(data: pd.DataFrame, required_cols: List[str]) -> None:
     if missing:
         logging.error(f"Missing columns in data: {missing}")
         raise ValueError(f"Returned data missing required columns: {missing}")
+    # Check for all-NaN columns
+    for col in required_cols:
+        if col in data.columns and data[col].isna().all():
+            logging.warning(f"Column '{col}' contains all-NaN values.")
+            raise ValueError(f"Column '{col}' contains all-NaN values.")
 
 def _fetch_data(ticker: str, period: str) -> pd.DataFrame:
     try:
