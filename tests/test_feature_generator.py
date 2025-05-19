@@ -109,3 +109,21 @@ def test_volatility_logging(caplog):
         with pytest.raises(ValueError):
             calculate_volatility(df, column='close', window=0)
         assert any('Window size must be a positive integer' in msg for msg in caplog.messages)
+
+def test_calculate_sma_logs_error_on_invalid_column(sample_df, caplog):
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(ValueError):
+            calculate_sma(sample_df, column='not_a_column', window=3)
+    assert any("not found in DataFrame" in m for m in caplog.text.splitlines())
+
+def test_calculate_price_change_pct_logs_error_on_invalid_column(sample_df, caplog):
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(ValueError):
+            calculate_price_change_pct(sample_df, column='not_a_column')
+    assert any("not found in DataFrame" in m for m in caplog.text.splitlines())
+
+def test_calculate_volatility_logs_error_on_invalid_column(sample_df, caplog):
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(ValueError):
+            calculate_volatility(sample_df, column='not_a_column', window=2)
+    assert any("not found in DataFrame" in m for m in caplog.text.splitlines())

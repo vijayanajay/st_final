@@ -33,6 +33,10 @@ Calculates the Simple Moving Average (SMA) for a specified column in a pandas Da
 - Logging is handled using the standard library `logging` module, with configuration centralized in `configs/logging_config.py`.
 - The function is tested in `tests/test_feature_generator.py`.
 
+**Testing:**
+- All functions are tested in `tests/test_feature_generator.py` for correctness, edge cases, and error handling.
+- Logging of error conditions is explicitly tested using pytest's `caplog` fixture to ensure observability and compliance with project requirements.
+
 **Example:**
 ```python
 import pandas as pd
@@ -69,6 +73,10 @@ Calculates the 1-day price change percentage for a specified column in a pandas 
 - Input validation and error handling are performed, with structured logging for all error conditions and critical operations (see code for logging details).
 - Logging is handled using the standard library `logging` module, with configuration centralized in `configs/logging_config.py`.
 - The function is tested in `tests/test_feature_generator.py`.
+
+**Testing:**
+- All functions are tested in `tests/test_feature_generator.py` for correctness, edge cases, and error handling.
+- Logging of error conditions is explicitly tested using pytest's `caplog` fixture to ensure observability and compliance with project requirements.
 
 **Example:**
 ```python
@@ -107,6 +115,10 @@ Calculates the rolling standard deviation (volatility) of the 1-day price change
 - Input validation and error handling are performed, with structured logging for all error conditions and critical operations (see code for logging details).
 - Logging is handled using the standard library `logging` module, with configuration centralized in `configs/logging_config.py`.
 - The function is tested in `tests/test_feature_generator.py`.
+
+**Testing:**
+- All functions are tested in `tests/test_feature_generator.py` for correctness, edge cases, and error handling.
+- Logging of error conditions is explicitly tested using pytest's `caplog` fixture to ensure observability and compliance with project requirements.
 
 **Example:**
 ```python

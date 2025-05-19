@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 9  
-**Remaining**: 21  
-**Progress**: 30%
+**Completed**: 10  
+**Remaining**: 20  
+**Progress**: 33%
 
 ## Tasks
 
@@ -21,11 +21,11 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 5. [x] **Add data validation and error handling** - Ensure proper handling of API errors and data consistency
 6. [x] **Write tests for data_loader.py** - Create pytest tests to verify data fetching functionality
 
-### Feature Generation Module (3/4)
+### Feature Generation Module (4/4)
 7. [x] **Create feature_generator.py with SMA calculation** - Implement function to calculate Simple Moving Averages
 8. [x] **Add price change percentage calculation** - Implement function for 1-day price change percentage
 9. [x] **Add volatility calculation** - Implement rolling standard deviation of price changes
-10. [ ] **Write tests for feature_generator.py** - Create pytest tests for feature calculations
+10. [x] **Write tests for feature_generator.py** - Create pytest tests for feature calculations
 
 ### Strategy Configuration (0/3)
 11. [ ] **Create config parser utility** - Implement YAML config file parser
