@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 13  
-**Remaining**: 17  
-**Progress**: 43%
+**Completed**: 14  
+**Remaining**: 16  
+**Progress**: 47%
 
 ## Tasks
 
@@ -32,9 +32,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 12. [x] **Create sample strategy config file** - Create sma_cross.yaml with configuration parameters
 13. [x] **Write tests for config parsing** - Create pytest tests to verify config loading and parsing (see `tests/test_config_parser.py`).
 
-### Strategy Implementation (0/4)
+### Strategy Implementation (1/4)
 14. [x] **Create strategies.py module** - Set up base structure for strategy implementations. File: `src/strategies.py`. Test File: `tests/test_strategies.py`. Docs: `docs/src/strategies.py.md`
-15. [ ] **Implement SMA crossover strategy** - Create function for SMA crossover signal generation
+15. [x] **Implement SMA crossover strategy** - Create function for SMA crossover signal generation
 16. [ ] **Add signal generation utility** - Create function to apply strategy to dataframe and generate signals
 17. [ ] **Write tests for strategies.py** - Create pytest tests for strategy implementations
 
@@ -72,6 +72,7 @@ Each task is considered complete when:
 ---
 
 **Recent Updates (2025-05-20):**
+- SMA crossover strategy function (`generate_sma_crossover_signals`) implemented, tested, and fully documented in `src/strategies.py` and `docs/src/strategies.py.md`.
 - Config parser utility and its tests are complete and fully documented.
 - Logging and testability for config parsing are now robust and standardized.
 - Documentation for `config_parser.py` and log testing approach added to `docs/`.
