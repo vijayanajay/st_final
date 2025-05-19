@@ -10,6 +10,7 @@ See docs/file_structure.md for a detailed directory and file listing.
 - **configs/**: Contains configuration files (YAML, JSON, etc.) for strategies, data sources, and environment settings. See configs/README.md for details.
 - **tests/**: Contains all pytest-based tests for business logic and modules. Each test module should correspond to a module in src/.
 - **docs/**: Contains all project documentation, including this overview, file structure, PRD, and task tracking.
+    - `src/`: Directory containing markdown documentation for corresponding `src/` modules.
 - **requirements.txt**: Python dependency manifest at the project root. Lists all required third-party packages (pandas, numpy, yfinance, pyyaml) and must remain minimal as per project policy.
 
 ## Documentation Policy
@@ -124,3 +125,35 @@ except (FileNotFoundError, ValueError) as e:
 **Testing:**
 - Unit tests in `tests/test_config_parser.py` cover loading valid configs, handling missing files, handling invalid YAML, and handling missing required fields.
 - Tests verify both function behavior and appropriate logging of events using pytest's `caplog` fixture.
+
+## strategies.py
+
+**Location:** src/strategies.py
+
+**Purpose:**
+This module will contain the logic for different trading strategies. It defines a `BaseStrategy` class that all specific strategy implementations will inherit from.
+
+**Key Classes:**
+- `BaseStrategy`
+    - **Purpose:** Serves as a foundational class for all strategy implementations.
+    - **Attributes:** (To be defined)
+    - **Methods:** (To be defined)
+
+**Example Usage:**
+```python
+from src.strategies import BaseStrategy
+
+# Further implementation will involve creating subclasses of BaseStrategy
+# class MyStrategy(BaseStrategy):
+#     def __init__(self, params):
+#         super().__init__()
+#         self.params = params
+#
+#     def generate_signals(self, data):
+#         # Strategy logic to generate buy/sell signals
+#         pass
+```
+
+**Testing:**
+- Unit tests in `tests/test_strategies.py` will verify the functionality of the `BaseStrategy` class and any implemented strategies.
+- Initial tests ensure the module can be imported and the `BaseStrategy` class exists.

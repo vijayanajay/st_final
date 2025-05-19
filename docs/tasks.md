@@ -33,7 +33,7 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 13. [x] **Write tests for config parsing** - Create pytest tests to verify config loading and parsing (see `tests/test_config_parser.py`).
 
 ### Strategy Implementation (0/4)
-14. [ ] **Create strategies.py module** - Set up base structure for strategy implementations
+14. [x] **Create strategies.py module** - Set up base structure for strategy implementations. File: `src/strategies.py`. Test File: `tests/test_strategies.py`. Docs: `docs/src/strategies.py.md`
 15. [ ] **Implement SMA crossover strategy** - Create function for SMA crossover signal generation
 16. [ ] **Add signal generation utility** - Create function to apply strategy to dataframe and generate signals
 17. [ ] **Write tests for strategies.py** - Create pytest tests for strategy implementations

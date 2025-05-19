@@ -8,23 +8,35 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `__init__.py` — Ensures the directory is recognized as a Python package.
     - `data_loader.py` — Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection, input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
     - `feature_generator.py` — Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
+    - `config_parser.py` — Utility for loading and validating YAML configuration files.
+    - `strategies.py` — Module for implementing trading strategies, including a BaseStrategy class.
 - `configs/` — Configuration files for strategies, data sources, environment settings, and logging.
     - `logging_config.py` — Centralized logging configuration. Should be imported and called from the main application entry point.
     - `README.md` — Placeholder and documentation for configuration conventions.
 - `tests/` — All pytest-based tests for business logic and modules.
     - `__init__.py` — Ensures the directory is recognized as a Python package.
     - `test_data_loader.py` — Tests for src/data_loader.py, including both unit (mocked) and integration (real API, optionally skipped) tests.
+    - `test_feature_generator.py` — Tests for src/feature_generator.py.
+    - `test_config_parser.py` — Tests for src/config_parser.py.
+    - `test_strategies.py` — Tests for src/strategies.py.
 - `docs/` — Project documentation (including this file, codebase overview, PRD, and tasks).
     - `data_loader.py.md` — Documentation for src/data_loader.py, including API, usage, and design notes.
     - `codebase_overview.md` — High-level overview of the codebase and documentation policy.
     - `file_structure.md` — This file. Describes the directory and file structure.
     - `prd.md`, `tasks.md` — Product requirements and task tracking.
+    - `src/`
+        - `config_parser.py.md` — Documentation for src/config_parser.py.
+        - `data_loader.py.md` — Documentation for src/data_loader.py.
+        - `feature_generator.py.md` — Documentation for src/feature_generator.py.
+        - `strategies.py.md` — Documentation for src/strategies.py.
 - `requirements.txt` — Python dependency manifest listing all required third-party packages for the project. Must include only minimal, necessary dependencies as per PRD and codebase policy.
 
 ## File Descriptions
 
 - **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection, input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
 - **src/feature_generator.py**: Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
+- **src/config_parser.py**: Utility for loading and validating YAML configuration files. See docs/src/config_parser.py.md for API and usage details.
+- **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class. See docs/src/strategies.py.md for API and usage details.
 
 ## Notes
 - Each directory contains a placeholder file to ensure it is tracked in version control.
