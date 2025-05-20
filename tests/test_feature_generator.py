@@ -71,59 +71,59 @@ def test_non_numeric_column(func, df, kwargs):
 def test_sma_logging(sample_df, caplog):
     with caplog.at_level('INFO'):
         calculate_sma(sample_df, column='close', window=2)
-    assert any('Calculating SMA' in msg for msg in caplog.messages)
+    assert any('Calculating SMA' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
             calculate_sma(sample_df, column='open', window=2)
-        assert any("not found in DataFrame" in msg for msg in caplog.messages)
+        assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
             calculate_sma(sample_df, column='close', window=0)
-        assert any("Window size must be a positive integer" in msg for msg in caplog.messages)
+        assert any("Window size must be a positive integer" in record.getMessage() for record in caplog.records)
 
 def test_price_change_pct_logging(caplog):
     df = pd.DataFrame({'close': [10, 12, 15]})
     with caplog.at_level('INFO'):
         calculate_price_change_pct(df, column='close')
-    assert any('Calculating 1-day price change percentage' in msg for msg in caplog.messages)
+    assert any('Calculating 1-day price change percentage' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
             calculate_price_change_pct(df, column='not_a_column')
-        assert any('not found in DataFrame' in msg for msg in caplog.messages)
+        assert any('not found in DataFrame' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         df2 = pd.DataFrame({'close': ['a', 'b', 'c']})
         with pytest.raises(ValueError):
             calculate_price_change_pct(df2, column='close')
-        assert any('must be numeric' in msg for msg in caplog.messages)
+        assert any('must be numeric' in record.getMessage() for record in caplog.records)
 
 def test_volatility_logging(caplog):
     df = pd.DataFrame({'close': [10, 12, 15]})
     with caplog.at_level('INFO'):
         calculate_volatility(df, column='close', window=2)
-    assert any('Calculating volatility' in msg for msg in caplog.messages)
+    assert any('Calculating volatility' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
             calculate_volatility(df, column='not_a_column', window=2)
-        assert any('not found in DataFrame' in msg for msg in caplog.messages)
+        assert any('not found in DataFrame' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
             calculate_volatility(df, column='close', window=0)
-        assert any('Window size must be a positive integer' in msg for msg in caplog.messages)
+        assert any('Window size must be a positive integer' in record.getMessage() for record in caplog.records)
 
 def test_calculate_sma_logs_error_on_invalid_column(sample_df, caplog):
     with caplog.at_level(logging.ERROR):
         with pytest.raises(ValueError):
             calculate_sma(sample_df, column='not_a_column', window=3)
-    assert any("not found in DataFrame" in m for m in caplog.text.splitlines())
+    assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)
 
 def test_calculate_price_change_pct_logs_error_on_invalid_column(sample_df, caplog):
     with caplog.at_level(logging.ERROR):
         with pytest.raises(ValueError):
             calculate_price_change_pct(sample_df, column='not_a_column')
-    assert any("not found in DataFrame" in m for m in caplog.text.splitlines())
+    assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)
 
 def test_calculate_volatility_logs_error_on_invalid_column(sample_df, caplog):
     with caplog.at_level(logging.ERROR):
         with pytest.raises(ValueError):
             calculate_volatility(sample_df, column='not_a_column', window=2)
-    assert any("not found in DataFrame" in m for m in caplog.text.splitlines())
+    assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)

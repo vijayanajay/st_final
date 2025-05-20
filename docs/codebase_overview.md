@@ -29,13 +29,13 @@ See docs/file_structure.md for a detailed directory and file listing.
 **Location:** src/data_loader.py
 
 **Purpose:**
-Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Volume'].
+Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
 
 **Key Function:**
 - `fetch(ticker: str, period: str = "max") -> pd.DataFrame`
     - **ticker**: Stock ticker symbol (e.g., 'AAPL').
     - **period**: Data period (e.g., '1y', '6mo', 'max'). Defaults to 'max'.
-    - **Returns**: DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Volume']
+    - **Returns**: DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
     - **Raises**: ValueError if input is invalid or data is empty.
     - **Logging**: Logs key events, errors, and warnings for observability.
 
@@ -48,7 +48,7 @@ print(df.head())
 ```
 
 **Testing:**
-- Unit tests in `tests/test_data_loader.py` use mocks for yfinance.
+- Unit tests in `tests/test_data_loader.py` use mocks for yfinance. All mocks and test DataFrames must include 'Adj Close' in the default columns.
 - Integration tests (recommended) should verify real API behavior (optionally skipped by default).
 
 ## feature_generator.py

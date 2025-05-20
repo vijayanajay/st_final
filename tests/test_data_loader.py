@@ -29,7 +29,7 @@ def test_fetch_calls_yfinance_and_returns_dataframe(monkeypatch):
     assert calls['ticker'] == 'RELIANCE.NS'
     # Verify DataFrame structure
     assert isinstance(df, pd.DataFrame)
-    for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
+    for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
         assert col in df.columns
     assert not df.empty
 
@@ -72,7 +72,7 @@ def test_fetch_caching(monkeypatch):
         def __init__(self, ticker): pass
         def history(self, period=None):
             call_counter['count'] += 1
-            return pd.DataFrame({'Open': [1.0], 'High': [1.1], 'Low': [0.9], 'Close': [1.05], 'Volume': [1000]})
+            return pd.DataFrame({'Open': [1.0], 'High': [1.1], 'Low': [0.9], 'Close': [1.05], 'Volume': [1000], 'Adj Close': [1.04]})
     monkeypatch.setattr(yfinance, 'Ticker', DummyTickerCount)
     data_loader.fetch('RELIANCE.NS', period='1y')
     data_loader.fetch('RELIANCE.NS', period='1y')  # Should use cache
@@ -116,7 +116,7 @@ def test_fetch_all_nan_column(monkeypatch, caplog):
     with caplog.at_level('WARNING'):
         with pytest.raises(ValueError):
             data_loader.fetch('RELIANCE.NS', period='1y', columns=['Open', 'High', 'Low', 'Close', 'Volume'], use_cache=False)
-        assert 'all-NaN' in caplog.text
+        assert any('all-NaN' in record.getMessage() for record in caplog.records)
 
 def test_fetch_logs_error_on_invalid_input(monkeypatch, caplog):
     data_loader._cached_fetch_data.cache_clear()
@@ -124,7 +124,7 @@ def test_fetch_logs_error_on_invalid_input(monkeypatch, caplog):
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
             data_loader.fetch('', period='1y')
-        assert 'Ticker' in caplog.text
+        assert any('Ticker' in record.getMessage() for record in caplog.records)
 
 @pytest.mark.skip(reason="Integration test: requires network and real API")
 def test_fetch_integration_real_api():

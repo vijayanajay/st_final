@@ -1,7 +1,7 @@
 # src/data_loader.py
 
 ## Overview
-Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Volume'].
+Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
 
 ## Function: fetch
 
@@ -15,7 +15,7 @@ def fetch(ticker: str, period: str = "max") -> pd.DataFrame:
 - `period` (str, optional): Data period (e.g., '1y', '6mo', 'max'). Defaults to 'max'.
 
 **Returns:**
-- `pd.DataFrame`: DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Volume']
+- `pd.DataFrame`: DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
 
 **Raises:**
 - `ValueError`: If input parameters are invalid or data is empty.
@@ -32,7 +32,7 @@ print(df.head())
 ```
 
 ## Testing
-- Unit tests in `tests/test_data_loader.py` use mocks for yfinance.
+- Unit tests in `tests/test_data_loader.py` use mocks for yfinance. All mocks and test DataFrames must include 'Adj Close' in the default columns.
 - Integration tests (recommended) should verify real API behavior (optionally skipped by default).
 
 ## Notes

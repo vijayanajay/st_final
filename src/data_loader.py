@@ -60,7 +60,7 @@ def fetch(
     Args:
         ticker (str): Stock ticker symbol (e.g., 'AAPL').
         period (str, optional): Data period (e.g., '1y', '6mo', 'max'). Defaults to 'max'.
-        columns (List[str], optional): Columns to return. Defaults to ['Open', 'High', 'Low', 'Close', 'Volume'].
+        columns (List[str], optional): Columns to return. Defaults to ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
         use_cache (bool, optional): Use in-memory cache for repeated queries. Defaults to True.
 
     Returns:
@@ -72,7 +72,7 @@ def fetch(
     validate_ticker(ticker)
     validate_period(period)
     if columns is None:
-        columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        columns = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
     logging.info(f"Fetching data for {ticker} with period '{period}' and columns {columns}")
     data = _cached_fetch_data(ticker, period) if use_cache else _fetch_data(ticker, period)
     validate_columns(data, columns)

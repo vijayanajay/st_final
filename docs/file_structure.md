@@ -6,7 +6,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 
 - `src/` — Source code for all modules and business logic.
     - `__init__.py` — Ensures the directory is recognized as a Python package.
-    - `data_loader.py` — Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection, input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
+    - `data_loader.py` — Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']), input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py). All test mocks must include 'Adj Close' in the default columns.
     - `feature_generator.py` — Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
     - `config_parser.py` — Utility for loading and validating YAML configuration files.
     - `strategies.py` — Module for implementing trading strategies, including a BaseStrategy class.
@@ -33,7 +33,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 
 ## File Descriptions
 
-- **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection, input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
+- **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']), input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
 - **src/feature_generator.py**: Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
 - **src/config_parser.py**: Utility for loading and validating YAML configuration files. See docs/src/config_parser.py.md for API and usage details.
 - **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class. See docs/src/strategies.py.md for API and usage details.

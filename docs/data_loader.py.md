@@ -1,7 +1,7 @@
 # src/data_loader.py
 
 ## Overview
-Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Volume'] or a user-specified subset. Supports input validation, parameterized column selection, and optional in-memory caching for performance.
+Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'] or a user-specified subset. Supports input validation, parameterized column selection, and optional in-memory caching for performance.
 
 ## Function: fetch
 
@@ -18,7 +18,7 @@ def fetch(
 **Arguments:**
 - `ticker` (str): Stock ticker symbol (e.g., 'AAPL').
 - `period` (str, optional): Data period (e.g., '1y', '6mo', 'max'). Defaults to 'max'.
-- `columns` (List[str], optional): Columns to return. Defaults to ['Open', 'High', 'Low', 'Close', 'Volume'].
+- `columns` (List[str], optional): Columns to return. Defaults to ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
 - `use_cache` (bool, optional): Use in-memory cache for repeated queries. Defaults to True.
 
 **Returns:**
@@ -44,7 +44,7 @@ df = data_loader.fetch('AAPL', period='1y', columns=['Open', 'Close'])
 - `_fetch_data`, `_cached_fetch_data`: Internal functions for data retrieval. `_cached_fetch_data` uses functools.lru_cache for in-memory caching.
 
 ## Testing
-- Unit tests in `tests/test_data_loader.py` use mocks for yfinance.
+- Unit tests in `tests/test_data_loader.py` use mocks for yfinance. All mocks and test DataFrames must include 'Adj Close' in the default columns.
 - Integration tests (recommended) should verify real API behavior (optionally skipped by default).
 
 ## Notes
