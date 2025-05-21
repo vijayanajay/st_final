@@ -97,3 +97,33 @@ print(vol)
 - Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for all three functions.
 
 ---
+
+## config_parser.py
+
+**Location:** src/config_parser.py
+
+**Purpose:**
+Provides utilities for loading and parsing YAML configuration files. Handles errors such as file not found or invalid YAML format.
+
+**Key Function:**
+- `load_config(file_path: str) -> dict`
+    - **file_path**: The path to the YAML configuration file.
+    - **Returns**: A dictionary containing the parsed YAML content.
+    - **Raises**: `FileNotFoundError` if the file doesn't exist, `yaml.YAMLError` if YAML is invalid.
+
+**Example Usage:**
+```python
+from src.config_parser import load_config
+import yaml # For yaml.YAMLError
+
+try:
+    config = load_config("configs/strategy_config.yaml")
+    api_key = config.get("api_key")
+except FileNotFoundError:
+    print("Config file not found.")
+except yaml.YAMLError:
+    print("Error parsing config file.")
+```
+
+**Testing:**
+- Unit tests in `tests/test_config_parser.py` cover loading valid files, handling non-existent files, and parsing invalid YAML.

@@ -8,6 +8,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `__init__.py` — Ensures the directory is recognized as a Python package.
     - `data_loader.py` — Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection, input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
     - `feature_generator.py` — Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
+    - `config_parser.py` — Utility for parsing YAML configuration files.
 - `configs/` — Configuration files for strategies, data sources, environment settings, and logging.
     - `logging_config.py` — Centralized logging configuration. Should be imported and called from the main application entry point.
     - `README.md` — Placeholder and documentation for configuration conventions.
@@ -15,6 +16,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `__init__.py` — Ensures the directory is recognized as a Python package.
     - `test_data_loader.py` — Tests for src/data_loader.py, including both unit (mocked) and integration (real API, optionally skipped) tests.
 - `docs/` — Project documentation (including this file, codebase overview, PRD, and tasks).
+    - `src/config_parser.py.md` — Documentation for the config parser module.
     - `data_loader.py.md` — Documentation for src/data_loader.py, including API, usage, and design notes.
     - `codebase_overview.md` — High-level overview of the codebase and documentation policy.
     - `file_structure.md` — This file. Describes the directory and file structure.
@@ -25,6 +27,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 
 - **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection, input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
 - **src/feature_generator.py**: Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
+- **src/config_parser.py**: Utility for parsing YAML configuration files. Handles FileNotFoundError and yaml.YAMLError exceptions. See docs/src/config_parser.py.md for API and usage.
 
 ## Notes
 - Each directory contains a placeholder file to ensure it is tracked in version control.
