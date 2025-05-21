@@ -20,6 +20,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `test_config_parser.py` — Tests for src/config_parser.py.
     - `test_strategies.py` — Tests for src/strategies.py.
 - `docs/` — Project documentation (including this file, codebase overview, PRD, and tasks).
+    - `src/config_parser.py.md` — Documentation for the config parser module.
     - `data_loader.py.md` — Documentation for src/data_loader.py, including API, usage, and design notes.
     - `codebase_overview.md` — High-level overview of the codebase and documentation policy.
     - `file_structure.md` — This file. Describes the directory and file structure.
