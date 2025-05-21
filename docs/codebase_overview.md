@@ -32,9 +32,11 @@ See docs/file_structure.md for a detailed directory and file listing.
 Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
 
 **Key Function:**
-- `fetch(ticker: str, period: str = "max") -> pd.DataFrame`
+- `fetch(ticker: str, period: str = "max", columns: Optional[List[str]] = None, use_cache: bool = True) -> pd.DataFrame`
     - **ticker**: Stock ticker symbol (e.g., 'AAPL').
     - **period**: Data period (e.g., '1y', '6mo', 'max'). Defaults to 'max'.
+    - **columns**: Optional list of columns to return. If None, all columns are returned.
+    - **use_cache**: Whether to use cached data if available. Defaults to True.
     - **Returns**: DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
     - **Raises**: ValueError if input is invalid or data is empty.
     - **Logging**: Logs key events, errors, and warnings for observability.
@@ -56,7 +58,7 @@ print(df.head())
 **Location:** src/feature_generator.py
 
 **Purpose:**
-Provides feature engineering utilities for stock trading strategies, currently including calculation of Simple Moving Averages (SMA) and 1-day price change percentage (see `calculate_price_change_pct`) with robust input validation and error handling. Logging is handled generically at the application level; this module emits structured log messages for all error conditions and critical operations.
+Provides feature engineering utilities for stock trading strategies, currently including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and volatility (calculate_volatility) with robust input validation and error handling. Logging is handled generically at the application level; this module emits structured log messages for all error conditions and critical operations.
 
 **Key Functions:**
 - `calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series`
@@ -83,7 +85,7 @@ Provides feature engineering utilities for stock trading strategies, currently i
 **Example Usage:**
 ```python
 from src.feature_generator import calculate_sma, calculate_price_change_pct, calculate_volatility
-import pandas as pd
+ import pandas as pd
 
 df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
 sma = calculate_sma(df, column='close', window=3)
@@ -131,7 +133,7 @@ except (FileNotFoundError, ValueError) as e:
 **Location:** src/strategies.py
 
 **Purpose:**
-This module will contain the logic for different trading strategies. It defines a `BaseStrategy` class that all specific strategy implementations will inherit from.
+This module contains the logic for different trading strategies. It defines a BaseStrategy class and implements the generate_sma_crossover_signals function for SMA crossover strategies.
 
 **Key Classes:**
 - `BaseStrategy`

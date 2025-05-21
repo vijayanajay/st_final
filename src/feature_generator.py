@@ -1,9 +1,9 @@
 import pandas as pd
 import logging
 
-def calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series:
+def add_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series:
     """
-    Calculate the Simple Moving Average (SMA) for a given column in a DataFrame.
+    Add Simple Moving Average (SMA) to the DataFrame.
 
     Args:
         df (pd.DataFrame): Input DataFrame containing price data.
@@ -31,9 +31,9 @@ def calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series:
     sma.name = f'sma_{window}'
     return sma
 
-def calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Series:
+def add_price_change_pct_1d(df: pd.DataFrame, column: str = "close") -> pd.Series:
     """
-    Calculate the 1-day price change percentage for a given column in a DataFrame.
+    Add 1-day price change percentage to the DataFrame.
 
     Args:
         df (pd.DataFrame): Input DataFrame containing price data.
@@ -59,9 +59,9 @@ def calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Se
     pct.name = 'price_change_pct_1d'
     return pct
 
-def calculate_volatility(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series:
+def add_volatility_nday(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series:
     """
-    Calculate the rolling standard deviation (volatility) of 1-day price change percentage for a given column.
+    Add n-day rolling volatility to the DataFrame.
 
     Args:
         df (pd.DataFrame): Input DataFrame containing price data.
@@ -91,3 +91,50 @@ def calculate_volatility(df: pd.DataFrame, column: str = "close", window: int = 
     volatility = price_change.rolling(window=window, min_periods=window).std()
     volatility.name = f'volatility_{window}'
     return volatility
+
+# Backward compatibility aliases for tests
+def calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series:
+    """
+    This is an alias for add_sma provided for backward compatibility with tests.
+    
+    See add_sma for full documentation.
+    """
+    return add_sma(df, column, window)
+
+def calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Series:
+    """
+    This is an alias for add_price_change_pct_1d provided for backward compatibility with tests.
+    
+    See add_price_change_pct_1d for full documentation.
+    """
+    return add_price_change_pct_1d(df, column)
+
+def calculate_volatility(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series:
+    """
+    This is an alias for add_volatility_nday provided for backward compatibility with tests.
+    
+    See add_volatility_nday for full documentation.
+    """
+    return add_volatility_nday(df, column, window)
+
+def generate_features(df: pd.DataFrame, feature_config: dict) -> pd.DataFrame:
+    """
+    Orchestrator to generate all features as specified in feature_config.
+
+    Args:
+        df (pd.DataFrame): Input DataFrame.
+        feature_config (dict): Dict specifying which features to add and their parameters.
+
+    Returns:
+        pd.DataFrame: DataFrame with new feature columns added.
+    """
+    for feature, params in feature_config.items():
+        if feature == "sma":
+            df = df.join(add_sma(df, **params))
+        elif feature == "price_change_pct_1d":
+            df = df.join(add_price_change_pct_1d(df, **params))
+        elif feature == "volatility_nday":
+            df = df.join(add_volatility_nday(df, **params))
+        else:
+            logging.warning(f"Feature '{feature}' is not recognized and will be ignored.")
+    return df

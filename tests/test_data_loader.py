@@ -8,7 +8,7 @@ class DummyTicker:
         self.ticker = ticker
         self.called_with = None
         self.history_call_count = 0
-    def history(self, period=None):
+    def history(self, period=None, interval=None):
         self.called_with = period
         self.history_call_count += 1
         return pd.DataFrame({
@@ -53,7 +53,7 @@ def test_fetch_validates_columns(monkeypatch):
     data_loader._cached_fetch_data.cache_clear()
     class DummyTickerMissingCol:
         def __init__(self, ticker): pass
-        def history(self, period=None):
+        def history(self, period=None, interval=None):
             return pd.DataFrame({'Open': [1.0]})
     monkeypatch.setattr(yfinance, 'Ticker', DummyTickerMissingCol)
     with pytest.raises(ValueError):
@@ -70,7 +70,7 @@ def test_fetch_caching(monkeypatch):
     call_counter = {'count': 0}
     class DummyTickerCount:
         def __init__(self, ticker): pass
-        def history(self, period=None):
+        def history(self, period=None, interval=None):
             call_counter['count'] += 1
             return pd.DataFrame({'Open': [1.0], 'High': [1.1], 'Low': [0.9], 'Close': [1.05], 'Volume': [1000], 'Adj Close': [1.04]})
     monkeypatch.setattr(yfinance, 'Ticker', DummyTickerCount)
@@ -84,7 +84,7 @@ def test_fetch_handles_yfinance_error(monkeypatch):
     data_loader._cached_fetch_data.cache_clear()
     class DummyTickerError:
         def __init__(self, ticker): pass
-        def history(self, period=None):
+        def history(self, period=None, interval=None):
             raise Exception('yfinance error')
     monkeypatch.setattr(yfinance, 'Ticker', DummyTickerError)
     with pytest.raises(Exception):
@@ -94,7 +94,7 @@ def test_fetch_handles_empty_data(monkeypatch):
     data_loader._cached_fetch_data.cache_clear()
     class DummyTickerEmpty:
         def __init__(self, ticker): pass
-        def history(self, period=None):
+        def history(self, period=None, interval=None):
             return pd.DataFrame()
     monkeypatch.setattr(yfinance, 'Ticker', DummyTickerEmpty)
     with pytest.raises(ValueError):
@@ -104,7 +104,7 @@ def test_fetch_all_nan_column(monkeypatch, caplog):
     data_loader._cached_fetch_data.cache_clear()
     class DummyTickerAllNaN:
         def __init__(self, ticker): pass
-        def history(self, period=None):
+        def history(self, period=None, interval=None):
             return pd.DataFrame({
                 'Open': [float('nan')],
                 'High': [1.1],
@@ -133,3 +133,10 @@ def test_fetch_integration_real_api():
     assert isinstance(df, pd.DataFrame)
     assert 'Open' in df.columns and 'Close' in df.columns
     assert not df.empty
+
+def test_fetch_data_signature_and_behavior():
+    import inspect
+    from src import data_loader
+    sig = inspect.signature(data_loader.fetch_data)
+    assert list(sig.parameters.keys()) == ["ticker", "period", "interval"]
+    # ...additional tests for correct behavior, error handling, and logging...

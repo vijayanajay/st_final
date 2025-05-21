@@ -9,7 +9,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `data_loader.py` — Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']), input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py). All test mocks must include 'Adj Close' in the default columns.
     - `feature_generator.py` — Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
     - `config_parser.py` — Utility for loading and validating YAML configuration files.
-    - `strategies.py` — Module for implementing trading strategies, including a BaseStrategy class.
+    - `strategies.py` — Module for implementing trading strategies, including a BaseStrategy class and the generate_sma_crossover_signals function.
 - `configs/` — Configuration files for strategies, data sources, environment settings, and logging.
     - `logging_config.py` — Centralized logging configuration. Should be imported and called from the main application entry point.
     - `README.md` — Placeholder and documentation for configuration conventions.
@@ -20,26 +20,24 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `test_config_parser.py` — Tests for src/config_parser.py.
     - `test_strategies.py` — Tests for src/strategies.py.
 - `docs/` — Project documentation (including this file, codebase overview, PRD, and tasks).
-    - `src/config_parser.py.md` — Documentation for the config parser module.
-    - `data_loader.py.md` — Documentation for src/data_loader.py, including API, usage, and design notes.
     - `codebase_overview.md` — High-level overview of the codebase and documentation policy.
     - `file_structure.md` — This file. Describes the directory and file structure.
     - `prd.md`, `tasks.md` — Product requirements and task tracking.
-    - `src/`
+    - `src/` — All module-specific documentation markdown files are located here. The convention is strictly: `docs/src/<module_name>.py.md`.
         - `config_parser.py.md` — Documentation for src/config_parser.py.
         - `data_loader.py.md` — Documentation for src/data_loader.py.
         - `feature_generator.py.md` — Documentation for src/feature_generator.py.
         - `strategies.py.md` — Documentation for src/strategies.py.
-- `requirements.txt` — Python dependency manifest listing all required third-party packages for the project. Must include only minimal, necessary dependencies as per PRD and codebase policy.
 
 ## File Descriptions
 
 - **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']), input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
 - **src/feature_generator.py**: Provides feature engineering utilities, including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and rolling volatility (see `calculate_volatility`). All functions include input validation, error handling, and structured logging. See docs/src/feature_generator.py.md for API and usage details.
 - **src/config_parser.py**: Utility for loading and validating YAML configuration files. See docs/src/config_parser.py.md for API and usage details.
-- **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class. See docs/src/strategies.py.md for API and usage details.
+- **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class and the `generate_sma_crossover_signals` function. See docs/src/strategies.py.md for API and usage details.
 
 ## Notes
 - Each directory contains a placeholder file to ensure it is tracked in version control.
-- All code and documentation changes must be reflected here, in docs/codebase_overview.md, and in the relevant docs/[filepath].md files (e.g., docs/data_loader.py.md, configs/logging_config.py.md).
+- All code and documentation changes must be reflected here, in docs/codebase_overview.md, and in the relevant docs/src/[module_name].py.md files.
 - If you add, remove, or rename directories or files, update this file and related documentation immediately.
+- **Documentation Path Convention:** All module-specific documentation markdown files must be located in `docs/src/` and named `<module_name>.py.md`. Any other path is incorrect and must be corrected immediately. This convention is enforced for clarity and consistency.

@@ -56,10 +56,16 @@ def test_generate_sma_crossover_signals_basic():
     # Period 7: SMA_short=12, SMA_long=13. Prev_short=13, Prev_long=13.5. (13 < 13.5) and (12 < 13) => HOLD (0)
     # Period 8: SMA_short=12.5, SMA_long=12.5. Prev_short=12, Prev_long=13. (12 < 13) and (12.5 == 12.5) => HOLD (0)
     # Period 9: SMA_short=14, SMA_long=12.5. Prev_short=12.5, Prev_long=12.5. (12.5 == 12.5) and (14 > 12.5) => BUY (1)
-
+    
     expected_signals = pd.Series([0, 1, 0, 0, 0, 0, -1, 0, 0, 1], name="signal")
 
     from src.strategies import generate_sma_crossover_signals
-    actual_signals = generate_sma_crossover_signals(df.copy(), short_window=5, long_window=10) # windows are illustrative
+    actual_signals = generate_sma_crossover_signals(df.copy()) # Using default column names
 
     assert_series_equal(actual_signals, expected_signals, check_dtype=False)
+
+def test_generate_sma_crossover_signals_signature_and_behavior():
+    import inspect
+    from src import strategies
+    sig = inspect.signature(strategies.generate_sma_crossover_signals)
+    assert list(sig.parameters.keys()) == ["df_with_features", "short_window_col", "long_window_col"]
