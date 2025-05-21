@@ -29,7 +29,7 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ### Strategy Configuration (0/3)
 11. [x] **Create config parser utility** - Implement YAML config file parser
-12. [ ] **Create sample strategy config file** - Create sma_cross.yaml with configuration parameters
+12. [x] **Create sample strategy config file** - Create sma_cross.yaml with configuration parameters
 13. [ ] **Write tests for config parsing** - Create pytest tests to verify config loading and parsing
 
 ### Strategy Implementation (0/4)

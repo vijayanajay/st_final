@@ -11,6 +11,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `config_parser.py` — Utility for parsing YAML configuration files.
 - `configs/` — Configuration files for strategies, data sources, environment settings, and logging.
     - `logging_config.py` — Centralized logging configuration. Should be imported and called from the main application entry point.
+    - `sma_cross.yaml` — Example strategy configuration for SMA Crossover.
     - `README.md` — Placeholder and documentation for configuration conventions.
 - `tests/` — All pytest-based tests for business logic and modules.
     - `__init__.py` — Ensures the directory is recognized as a Python package.
