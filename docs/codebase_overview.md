@@ -31,73 +31,77 @@ See docs/file_structure.md for a detailed directory and file listing.
 **Purpose:**
 Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
 
-**Key Function:**
-- `fetch(ticker: str, period: str = "max", columns: Optional[List[str]] = None, use_cache: bool = True) -> pd.DataFrame`
-    - **ticker**: Stock ticker symbol (e.g., 'AAPL').
-    - **period**: Data period (e.g., '1y', '6mo', 'max'). Defaults to 'max'.
-    - **columns**: Optional list of columns to return. If None, all columns are returned.
-    - **use_cache**: Whether to use cached data if available. Defaults to True.
-    - **Returns**: DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
-    - **Raises**: ValueError if input is invalid or data is empty.
-    - **Logging**: Logs key events, errors, and warnings for observability.
+**Key Functions:**
+- `fetch_data(ticker: str, period: str = "max", interval: str = "1d") -> pd.DataFrame`
+    - **Primary interface as specified in design.md.**
+    - Fetches historical stock data for a given ticker, period, and interval using yfinance.
+    - **Returns:** DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+    - **Raises:** ValueError if input is invalid or data is empty.
+    - **Logging:** Logs key events, errors, and warnings for observability.
+- `fetch(ticker: str, period: str = "1y", columns: Optional[List[str]] = None, use_cache: bool = True) -> pd.DataFrame`
+    - Convenience function for fetching historical stock data for a given ticker and period, with optional column selection and cache control.
+    - **Returns:** DataFrame with requested columns (default: all standard columns).
+    - **Raises:** ValueError if input is invalid or data is empty.
+    - **Logging:** Logs key events, errors, and warnings for observability.
 
 **Example Usage:**
 ```python
 from src import data_loader
 
-df = data_loader.fetch('AAPL', period='1y')
-print(df.head())
+df1 = data_loader.fetch_data('AAPL', period='1y', interval='1d')
+df2 = data_loader.fetch('AAPL', period='1y', columns=['Open', 'Close'])
+print(df1.head())
+print(df2.head())
 ```
 
 **Testing:**
 - Unit tests in `tests/test_data_loader.py` use mocks for yfinance. All mocks and test DataFrames must include 'Adj Close' in the default columns.
 - Integration tests (recommended) should verify real API behavior (optionally skipped by default).
 
+**Documentation Policy Note:**
+- All key public functions must be listed in this section. Cross-reference with design.md and docs/src/data_loader.py.md during documentation reviews to ensure completeness.
+
 ## feature_generator.py
 
 **Location:** src/feature_generator.py
 
 **Purpose:**
-Provides feature engineering utilities for stock trading strategies, currently including calculation of Simple Moving Averages (SMA), 1-day price change percentage, and volatility (calculate_volatility) with robust input validation and error handling. Logging is handled generically at the application level; this module emits structured log messages for all error conditions and critical operations.
+Provides feature engineering utilities for stock trading strategies. The module's primary interface consists of functions to add features directly to DataFrames, with robust input validation and error handling. Logging is handled generically at the application level; this module emits structured log messages for all error conditions and critical operations.
 
-**Key Functions:**
-- `calculate_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series`
-    - **df**: Input DataFrame containing price data.
-    - **column**: Name of the column to calculate SMA on.
-    - **window**: Window size for the moving average. Must be > 0.
-    - **Returns**: Series containing the SMA values, named as 'sma_{window}'.
-    - **Raises**: ValueError if the column does not exist or window is invalid.
-    - **Logging**: Structured logging is implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
-- `calculate_price_change_pct(df: pd.DataFrame, column: str = "close") -> pd.Series`
-    - **df**: Input DataFrame containing price data.
-    - **column**: Name of the column to calculate price change percentage on. Defaults to 'close'.
-    - **Returns**: Series containing the 1-day price change percentage, named as 'price_change_pct_1d'.
-    - **Raises**: ValueError if the column does not exist or is not numeric.
-    - **Logging**: Structured logging is implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
-- `calculate_volatility(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series`
-    - **df**: Input DataFrame containing price data.
-    - **column**: Name of the column to calculate volatility on. Defaults to 'close'.
-    - **window**: Window size for the rolling standard deviation. Must be > 0.
-    - **Returns**: Series containing the rolling volatility, named as 'volatility_{window}'.
-    - **Raises**: ValueError if the column does not exist, is not numeric, or window is invalid.
-    - **Logging**: Structured logging is implemented for all error conditions and critical operations using the standard library `logging` module. Logging configuration is centralized in `configs/logging_config.py`.
+**Primary Interface Functions:**
+- `add_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series`
+    - Adds a Simple Moving Average (SMA) column to the DataFrame for the specified column and window.
+- `add_price_change_pct_1d(df: pd.DataFrame, column: str = "close") -> pd.Series`
+    - Adds a 1-day price change percentage column to the DataFrame.
+- `add_volatility_nday(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series`
+    - Adds an n-day rolling volatility column to the DataFrame.
+- `generate_features(df: pd.DataFrame, feature_config: dict) -> pd.DataFrame`
+    - Orchestrates feature generation as specified in the feature_config dictionary.
+
+**Backward-Compatibility Aliases:**
+- `calculate_sma`, `calculate_price_change_pct`, and `calculate_volatility` are provided as aliases for legacy/test compatibility. They delegate to the corresponding add_* functions and should not be used as the primary API.
 
 **Example Usage:**
 ```python
-from src.feature_generator import calculate_sma, calculate_price_change_pct, calculate_volatility
- import pandas as pd
+from src.feature_generator import add_sma, add_price_change_pct_1d, add_volatility_nday, generate_features
+import pandas as pd
 
 df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
-sma = calculate_sma(df, column='close', window=3)
-pct = calculate_price_change_pct(df, column='close')
-vol = calculate_volatility(df, column='close', window=3)
+sma = add_sma(df, column='close', window=3)
+pct = add_price_change_pct_1d(df, column='close')
+vol = add_volatility_nday(df, column='close', window=3)
+features_df = generate_features(df, {'sma': {'column': 'close', 'window': 3}})
 print(sma)
 print(pct)
 print(vol)
+print(features_df)
 ```
 
 **Testing:**
-- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for all three functions.
+- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for all primary interface functions and aliases.
+
+**Documentation Policy Note:**
+- All changes to module APIs (function additions, renames, deprecations) must trigger an immediate review and update of `docs/codebase_overview.md`, `docs/file_structure.md`, and the relevant `docs/src/[module].py.md`. This is a mandatory part of the Definition of Done for any API-altering task.
 
 ## config_parser.py
 
