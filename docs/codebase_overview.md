@@ -145,21 +145,48 @@ This module contains the logic for different trading strategies. It defines a Ba
     - **Attributes:** (To be defined)
     - **Methods:** (To be defined)
 
+**Key Functions:**
+- `generate_sma_crossover_signals(df_with_features: pd.DataFrame, short_window_col: str = "SMA_short", long_window_col: str = "SMA_long") -> pd.Series`
+    - **Purpose:** Generates trading signals based on SMA crossovers.
+    - **Returns:** Series with trading signals (1 for buy, -1 for sell, 0 for hold).
+    - **Raises:** ValueError if required columns are missing.
+
+- `apply_strategy(df: pd.DataFrame, strategy_params: dict) -> pd.DataFrame`
+    - **Purpose:** Applies a trading strategy to a DataFrame and generates buy/sell signals.
+    - **Parameters:**
+        - `df`: DataFrame containing price data and technical indicators.
+        - `strategy_params`: Dictionary containing strategy type and parameters.
+    - **Returns:** DataFrame with added 'signal' column (1 for buy, -1 for sell, 0 for hold).
+    - **Raises:** ValueError if strategy type is not supported or required parameters are missing.
+    - **Supported Strategy Types:** 'sma_crossover' (requires 'fast_sma' and 'slow_sma' parameters)
+
 **Example Usage:**
 ```python
-from src.strategies import BaseStrategy
+import pandas as pd
+from src.strategies import generate_sma_crossover_signals, apply_strategy
 
-# Further implementation will involve creating subclasses of BaseStrategy
-# class MyStrategy(BaseStrategy):
-#     def __init__(self, params):
-#         super().__init__()
-#         self.params = params
-#
-#     def generate_signals(self, data):
-#         # Strategy logic to generate buy/sell signals
-#         pass
+# Example with generate_sma_crossover_signals
+df = pd.DataFrame({
+    'Close': [100, 102, 104, 103, 101],
+    'SMA5': [101, 102, 103, 102.5, 102],
+    'SMA20': [100, 100.5, 101, 101.5, 102]
+})
+signals = generate_sma_crossover_signals(df, 'SMA5', 'SMA20')
+print(signals)
+
+# Example with apply_strategy
+strategy_params = {
+    'strategy_type': 'sma_crossover',
+    'parameters': {
+        'fast_sma': 'SMA5',
+        'slow_sma': 'SMA20'
+    }
+}
+result_df = apply_strategy(df, strategy_params)
+print(result_df)
 ```
 
 **Testing:**
-- Unit tests in `tests/test_strategies.py` will verify the functionality of the `BaseStrategy` class and any implemented strategies.
-- Initial tests ensure the module can be imported and the `BaseStrategy` class exists.
+- Unit tests in `tests/test_strategies.py` verify the functionality of the `BaseStrategy` class and the `generate_sma_crossover_signals` function.
+- Unit tests in `tests/test_apply_strategy.py` verify the functionality of the `apply_strategy` function, including error handling and signal generation.
+- Tests ensure that signals are correctly generated based on the strategy parameters.

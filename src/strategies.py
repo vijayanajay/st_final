@@ -3,14 +3,15 @@
 This module will contain the logic for different trading strategies.
 """
 
+import pandas as pd
+import numpy as np
+import logging
+
 class BaseStrategy:
     """
     A base class for all trading strategies.
     """
     pass
-
-import pandas as pd
-import numpy as np
 
 def generate_sma_crossover_signals(df_with_features: pd.DataFrame, 
                               short_window_col: str = "SMA_short", 
@@ -49,3 +50,63 @@ def generate_sma_crossover_signals(df_with_features: pd.DataFrame,
     ] = -1  # Sell signal
 
     return signals
+
+def apply_strategy(df, strategy_params):
+    """
+    Apply a trading strategy to a DataFrame and generate buy/sell signals.
+    
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        DataFrame containing price data and any required technical indicators.
+    strategy_params : dict
+        Dictionary containing strategy type and parameters.
+        Must include 'strategy_type' key and 'parameters' dict.
+    
+    Returns:
+    --------
+    pandas.DataFrame
+        Original DataFrame with added 'signal' column where:
+        1 = buy signal
+        -1 = sell signal
+        0 = no signal/hold
+    
+    Raises:
+    -------
+    ValueError
+        If strategy type is not supported or required parameters are missing.
+    """
+    logger = logging.getLogger(__name__)
+    logger.info(f"Applying {strategy_params['strategy_type']} strategy")
+    
+    # Create a copy of the DataFrame to avoid modifying the original
+    result_df = df.copy()
+    
+    # Initialize signal column with zeros (no signal)
+    result_df['signal'] = 0
+    
+    strategy_type = strategy_params.get('strategy_type')
+    params = strategy_params.get('parameters', {})
+    
+    if strategy_type == 'sma_crossover':
+        # Check for required parameters
+        required_params = ['fast_sma', 'slow_sma']
+        for param in required_params:
+            if param not in params:
+                error_msg = f"Missing required parameter '{param}' for SMA crossover strategy"
+                logger.error(error_msg)
+                raise ValueError(error_msg)
+          # Apply SMA crossover strategy
+        signals = generate_sma_crossover_signals(
+            result_df, 
+            short_window_col=params['fast_sma'],
+            long_window_col=params['slow_sma']
+        )
+        result_df['signal'] = signals
+    else:
+        error_msg = f"Unsupported strategy type: {strategy_type}"
+        logger.error(error_msg)
+        raise ValueError(error_msg)
+    
+    logger.info(f"Strategy applied, generated {(result_df['signal'] != 0).sum()} signals")
+    return result_df

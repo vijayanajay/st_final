@@ -19,6 +19,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `test_feature_generator.py` — Tests for src/feature_generator.py.
     - `test_config_parser.py` — Tests for src/config_parser.py.
     - `test_strategies.py` — Tests for src/strategies.py.
+    - `test_apply_strategy.py` — Tests for the apply_strategy function in src/strategies.py.
 - `docs/` — Project documentation (including this file, codebase overview, PRD, and tasks).
     - `codebase_overview.md` — High-level overview of the codebase and documentation policy.
     - `file_structure.md` — This file. Describes the directory and file structure.
@@ -34,7 +35,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 - **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']), input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
 - **src/feature_generator.py**: Provides feature engineering utilities for stock trading strategies. The primary interface consists of add_sma, add_price_change_pct_1d, add_volatility_nday, and the generate_features orchestrator, all of which add features directly to DataFrames with robust input validation, error handling, and structured logging. The calculate_* functions (e.g., calculate_volatility) are backward-compatibility aliases and not the main API. See docs/src/feature_generator.py.md for full API and usage details. Regularly audit this description against the module and design.md to ensure accuracy.
 - **src/config_parser.py**: Utility for loading and validating YAML configuration files. See docs/src/config_parser.py.md for API and usage details.
-- **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class and the `generate_sma_crossover_signals` function. See docs/src/strategies.py.md for API and usage details.
+- **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class, the `generate_sma_crossover_signals` function for generating signals based on SMA crossovers, and the `apply_strategy` function for applying different strategies to data. See docs/src/strategies.py.md for API and usage details.
 
 ## Notes
 - Each directory contains a placeholder file to ensure it is tracked in version control.

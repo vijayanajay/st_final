@@ -67,3 +67,46 @@ This ensures signals are only generated at the actual crossover points, not cont
 - Implementation of specific strategies (e.g., SMA Crossover, EMA Crossover).
 - Methods for signal generation based on strategy logic.
 - Parameterization of strategies.
+
+## `apply_strategy` Function
+
+- **Purpose:**
+    - Applies a trading strategy to a DataFrame and generates buy/sell signals.
+    - Acts as a utility function that can apply different strategy types based on parameters.
+- **Parameters:**
+    - `df` (`pd.DataFrame`): DataFrame containing price data and any required technical indicators.
+    - `strategy_params` (`dict`): Dictionary containing strategy type and parameters. Must include 'strategy_type' key and 'parameters' dict.
+- **Returns:**
+    - `pd.DataFrame`: Original DataFrame with added 'signal' column (1 = buy, -1 = sell, 0 = no action)
+- **Raises:**
+    - `ValueError`: If strategy type is not supported or required parameters are missing.
+
+### Supported Strategy Types:
+- `sma_crossover`: Generates signals when fast SMA crosses above/below slow SMA
+  - Required parameters: 'fast_sma' (column name), 'slow_sma' (column name)
+
+### Example Usage
+```python
+import pandas as pd
+from src.strategies import apply_strategy
+
+# Prepare data with technical indicators
+df = pd.DataFrame({
+    'Close': [100, 102, 104, 103, 101],
+    'SMA5': [101, 102, 103, 102.5, 102],
+    'SMA20': [100, 100.5, 101, 101.5, 102]
+})
+
+# Define strategy parameters
+strategy_params = {
+    'strategy_type': 'sma_crossover',
+    'parameters': {
+        'fast_sma': 'SMA5',
+        'slow_sma': 'SMA20'
+    }
+}
+
+# Apply strategy
+result = apply_strategy(df, strategy_params)
+print(result)
+```

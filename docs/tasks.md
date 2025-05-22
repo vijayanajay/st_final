@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 14  
-**Remaining**: 16  
-**Progress**: 47%
+**Completed**: 15  
+**Remaining**: 15  
+**Progress**: 50%
 
 ## Tasks
 
@@ -27,19 +27,11 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 9. [x] **Add volatility calculation** - Implement rolling standard deviation of price changes
 10. [x] **Write tests for feature_generator.py** - Create pytest tests for feature calculations
 
-### Strategy Configuration (3/3)
-11. [x] **Create config parser utility** - Implement YAML config file parser (`src/config_parser.py`)
-12. [x] **Create sample strategy config file** - Create sma_cross.yaml with configuration parameters
-13. [x] **Write tests for config parsing** - Create pytest tests to verify config loading and parsing (see `tests/test_config_parser.py`).
-### Strategy Configuration (0/3)
-11. [x] **Create config parser utility** - Implement YAML config file parser
-12. [ ] **Create sample strategy config file** - Create sma_cross.yaml with configuration parameters
-13. [ ] **Write tests for config parsing** - Create pytest tests to verify config loading and parsing
 
-### Strategy Implementation (1/4)
+### Strategy Implementation (2/4)
 14. [x] **Create strategies.py module** - Set up base structure for strategy implementations. File: `src/strategies.py`. Test File: `tests/test_strategies.py`. Docs: `docs/src/strategies.py.md`
 15. [x] **Implement SMA crossover strategy** - Create function for SMA crossover signal generation
-16. [ ] **Add signal generation utility** - Create function to apply strategy to dataframe and generate signals
+16. [x] **Add signal generation utility** - Create function to apply strategy to dataframe and generate signals. File: `src/strategies.py`. Test File: `tests/test_apply_strategy.py`
 17. [ ] **Write tests for strategies.py** - Create pytest tests for strategy implementations
 
 ### Backtester Module (0/5)
@@ -75,7 +67,10 @@ Each task is considered complete when:
 
 ---
 
-**Recent Updates (2025-05-20):**
+**Recent Updates (2025-05-22):**
+- Signal generation utility (`apply_strategy`) implemented, tested, and fully documented in `src/strategies.py` and `docs/src/strategies.py.md`.
+- Added comprehensive tests for the signal generation utility in `tests/test_apply_strategy.py`.
+- Updated documentation to include details about the new `apply_strategy` function and its parameters.
 - SMA crossover strategy function (`generate_sma_crossover_signals`) implemented, tested, and fully documented in `src/strategies.py` and `docs/src/strategies.py.md`.
 - Config parser utility and its tests are complete and fully documented.
 - Logging and testability for config parsing are now robust and standardized.
