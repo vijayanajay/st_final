@@ -110,3 +110,17 @@ strategy_params = {
 result = apply_strategy(df, strategy_params)
 print(result)
 ```
+
+### Testing
+The `apply_strategy` function is thoroughly tested in `tests/test_apply_strategy.py` with the following test cases:
+
+1. **Basic functionality**: Tests correct signal generation for the SMA crossover strategy.
+2. **Invalid strategy type**: Tests proper error handling for unsupported strategy types.
+3. **Missing parameters**: Tests proper error handling when required parameters are missing.
+4. **Different column names**: Tests correct behavior when using non-default column names for SMAs.
+5. **Empty DataFrame**: Tests handling of an empty DataFrame.
+6. **NaNs in feature columns**: Tests proper handling of NaN values in SMA columns.
+7. **Logging verification**: Tests that appropriate log messages are generated.
+8. **Original DataFrame preservation**: Tests that the original DataFrame is not modified.
+
+These tests ensure the reliability and correctness of the strategy application logic, providing confidence in backtesting results.

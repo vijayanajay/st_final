@@ -106,12 +106,18 @@ The application will consist of the following Python modules:
 *   **Responsibilities:**
     *   Fetch historical stock data using the `yfinance` library.
     *   Handle parameters like stock ticker, data granularity (`1d`), and period (`max`).
-    *   Ensure the output DataFrame has the specified columns: `Date` (index), `Open`, `High`, `Low`, `Close`, `Adj Close`, `Volume`.
+    *   Support column selection and cache control.
+    *   Ensure the output DataFrame has the specified columns (defaults to: `Date` (index), `Open`, `High`, `Low`, `Close`, `Adj Close`, `Volume`).
 *   **Interfaces:**
-    *   `fetch_data(ticker: str, period: str = "max", interval: str = "1d") -> pd.DataFrame:`
-        *   Input: Stock ticker symbol, period string, interval string.
-        *   Output: Pandas DataFrame with historical stock data.
+    *   `fetch_data(ticker: str, period: str = "max", interval: str = "1d", columns: List[str] = None, use_cache: bool = True) -> pd.DataFrame:`
+        *   Input: Stock ticker symbol, period string, interval string, optional column selection, and cache control flag.
+        *   Output: Pandas DataFrame with historical stock data (all columns or specified subset).
         *   Raises: `ValueError` or custom exception if data fetching fails or returns an empty/invalid DataFrame.
+    *   `fetch(ticker: str, period: str = "1y", columns: List[str] = None, use_cache: bool = True) -> pd.DataFrame:`
+        *   Backward-compatibility wrapper around `fetch_data`.
+        *   Has a different default for `period` parameter ("1y" instead of "max").
+        *   Always uses "1d" as the interval.
+        *   Delegates to `fetch_data` for actual implementation.
 *   **Key Data Structures:** Pandas DataFrame.
 *   **Applicable Design Patterns:** Wrapper/Facade around `yfinance` API.
 *   **Interaction with other components:** Called by `main.py`.
@@ -123,18 +129,26 @@ The application will consist of the following Python modules:
     *   Add new feature columns to the DataFrame.
     *   Initial features: `SMA_short`, `SMA_long`, `Price_Change_Pct_1d`, `Volatility_Nday`.
 *   **Interfaces:**
-    *   `add_sma(df: pd.DataFrame, window: int, sma_col_name: str) -> pd.DataFrame:`
-        *   Calculates SMA for `Close` price and adds it as `sma_col_name`.
-    *   `add_price_change_pct_1d(df: pd.DataFrame) -> pd.DataFrame:`
-        *   Calculates 1-day percentage price change and adds it as `Price_Change_Pct_1d`.
-    *   `add_volatility_nday(df: pd.DataFrame, window: int) -> pd.DataFrame:`
-        *   Calculates N-day rolling std dev of `Price_Change_Pct_1d` and adds it as `Volatility_Nday`.
-    *   `generate_features(df: pd.DataFrame, strategy_params: dict) -> pd.DataFrame:`
+    *   `add_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series:`
+        *   Calculates SMA for the specified column and window, returning a Series named 'sma_{window}'.
+    *   `add_price_change_pct_1d(df: pd.DataFrame, column: str = "close") -> pd.Series:`
+        *   Calculates 1-day percentage price change for the specified column, returning a Series named 'price_change_pct_1d'.
+    *   `add_volatility_nday(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series:`
+        *   Calculates N-day rolling std dev of price changes for the specified column and window, returning a Series named 'volatility_{window}'.
+    *   `generate_features(df: pd.DataFrame, feature_config: dict) -> pd.DataFrame:`
         *   Orchestrator function within this module.
-        *   Input: DataFrame from `data_loader`, strategy parameters (e.g., for SMA windows).
+        *   Input: DataFrame from `data_loader`, feature configuration dictionary.
         *   Output: DataFrame with original data + new feature columns.
-        *   This function will call the specific feature calculation functions based on what's needed by the strategy (initially hardcoded for SMA crossover needs, but could be made more dynamic if strategy definitions become more complex). For v0.1, it will specifically add `SMA_short` and `SMA_long` using `short_window` and `long_window` from `strategy_params`. The other features (`Price_Change_Pct_1d`, `Volatility_Nday`) will be added if their parameters are provided or fixed (e.g., `Volatility_Nday` window could be fixed at 20 for now, or also made configurable).
-        *   *Self-correction from PRD:* The PRD lists `Price_Change_Pct_1d` and `Volatility_Nday` as initial features. `Volatility_Nday` needs a window parameter. For v0.1, let's assume a fixed window (e.g., 20) for `Volatility_Nday` or make it configurable in the YAML if simple. The PRD says "configurable or fixed for now". Let's make it fixed (e.g., 20) for v0.1 to keep config simple, focusing on SMA params.
+        *   This function iterates through the feature_config dictionary where keys are feature names (e.g., "sma", "price_change_pct_1d", "volatility_nday") and values are their parameters. For each feature, it calls the corresponding add_* function with the provided parameters.
+        *   This design provides more flexibility than coupling directly to strategy parameters, as it allows any combination of features to be generated based on the configuration, regardless of the strategy that will use them.
+        *   Example feature_config structure:
+          ```python
+          {
+              "sma": {"column": "close", "window": 20},
+              "price_change_pct_1d": {"column": "close"},
+              "volatility_nday": {"column": "close", "window": 20}
+          }
+          ```
 *   **Key Data Structures:** Pandas DataFrame.
 *   **Applicable Design Patterns:** Functions act as simple feature calculators.
 *   **Interaction with other components:** Called by `main.py`. Takes DataFrame and strategy parameters.

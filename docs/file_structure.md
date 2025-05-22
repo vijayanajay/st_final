@@ -6,7 +6,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 
 - `src/` — Source code for all modules and business logic.
     - `__init__.py` — Ensures the directory is recognized as a Python package.
-    - `data_loader.py` — Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']), input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py). All test mocks must include 'Adj Close' in the default columns.
+    - `data_loader.py` — Provides modular, validated, and parameterized access to historical stock data using yfinance. Primary interface is fetch_data which supports column selection, interval parameters, period configuration, cache control, and comprehensive input validation. The fetch function is maintained as a backward-compatibility wrapper around fetch_data. Features structured logging (logging config is not set here; see configs/logging_config.py).
     - `feature_generator.py` — Provides feature engineering utilities for stock trading strategies. The primary interface consists of add_sma, add_price_change_pct_1d, add_volatility_nday, and the generate_features orchestrator, all of which add features directly to DataFrames with robust input validation, error handling, and structured logging. The calculate_* functions (e.g., calculate_volatility) are backward-compatibility aliases and not the main API. See docs/src/feature_generator.py.md for full API and usage details. Regularly audit this description against the module and design.md to ensure accuracy.
     - `config_parser.py` — Utility for loading and validating YAML configuration files.
     - `strategies.py` — Module for implementing trading strategies, including a BaseStrategy class and the generate_sma_crossover_signals function.
@@ -14,12 +14,11 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `logging_config.py` — Centralized logging configuration. Should be imported and called from the main application entry point.
     - `README.md` — Placeholder and documentation for configuration conventions.
 - `tests/` — All pytest-based tests for business logic and modules.
-    - `__init__.py` — Ensures the directory is recognized as a Python package.
-    - `test_data_loader.py` — Tests for src/data_loader.py, including both unit (mocked) and integration (real API, optionally skipped) tests.
+    - `__init__.py` — Ensures the directory is recognized as a Python package.    - `test_data_loader.py` — Tests for src/data_loader.py, including both unit (mocked) and integration (real API, optionally skipped) tests.
     - `test_feature_generator.py` — Tests for src/feature_generator.py.
     - `test_config_parser.py` — Tests for src/config_parser.py.
     - `test_strategies.py` — Tests for src/strategies.py.
-    - `test_apply_strategy.py` — Tests for the apply_strategy function in src/strategies.py.
+    - `test_apply_strategy.py` — Comprehensive tests for the apply_strategy function in src/strategies.py, covering correct signal generation, parameter validation, different column names, empty DataFrames, NaN handling, logging verification, and DataFrame immutability.
 - `docs/` — Project documentation (including this file, codebase overview, PRD, and tasks).
     - `codebase_overview.md` — High-level overview of the codebase and documentation policy.
     - `file_structure.md` — This file. Describes the directory and file structure.
@@ -32,7 +31,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 
 ## File Descriptions
 
-- **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Supports column selection (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']), input validation, optional in-memory caching, and structured logging (logging config is not set here; see configs/logging_config.py).
+- **src/data_loader.py**: Provides modular, validated, and parameterized access to historical stock data using yfinance. Primary interface `fetch_data` supports column selection, interval parameters, period configuration, cache control, and comprehensive input validation. The `fetch` function is maintained as a backward-compatibility wrapper. See docs/src/data_loader.py.md for complete API details.
 - **src/feature_generator.py**: Provides feature engineering utilities for stock trading strategies. The primary interface consists of add_sma, add_price_change_pct_1d, add_volatility_nday, and the generate_features orchestrator, all of which add features directly to DataFrames with robust input validation, error handling, and structured logging. The calculate_* functions (e.g., calculate_volatility) are backward-compatibility aliases and not the main API. See docs/src/feature_generator.py.md for full API and usage details. Regularly audit this description against the module and design.md to ensure accuracy.
 - **src/config_parser.py**: Utility for loading and validating YAML configuration files. See docs/src/config_parser.py.md for API and usage details.
 - **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class, the `generate_sma_crossover_signals` function for generating signals based on SMA crossovers, and the `apply_strategy` function for applying different strategies to data. See docs/src/strategies.py.md for API and usage details.

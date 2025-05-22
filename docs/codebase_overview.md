@@ -32,24 +32,24 @@ See docs/file_structure.md for a detailed directory and file listing.
 Fetches historical stock data for a given ticker and period using yfinance. Returns a pandas DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
 
 **Key Functions:**
-- `fetch_data(ticker: str, period: str = "max", interval: str = "1d") -> pd.DataFrame`
+- `fetch_data(ticker: str, period: str = "max", interval: str = "1d", columns: List[str] = None, use_cache: bool = True) -> pd.DataFrame`
     - **Primary interface as specified in design.md.**
     - Fetches historical stock data for a given ticker, period, and interval using yfinance.
-    - **Returns:** DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+    - Supports column selection and cache control.
+    - **Returns:** DataFrame with requested columns (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
     - **Raises:** ValueError if input is invalid or data is empty.
     - **Logging:** Logs key events, errors, and warnings for observability.
 - `fetch(ticker: str, period: str = "1y", columns: Optional[List[str]] = None, use_cache: bool = True) -> pd.DataFrame`
-    - Convenience function for fetching historical stock data for a given ticker and period, with optional column selection and cache control.
-    - **Returns:** DataFrame with requested columns (default: all standard columns).
+    - Backward-compatibility wrapper around `fetch_data`.
+    - **Returns:** DataFrame with requested columns.
     - **Raises:** ValueError if input is invalid or data is empty.
-    - **Logging:** Logs key events, errors, and warnings for observability.
 
 **Example Usage:**
 ```python
 from src import data_loader
 
 df1 = data_loader.fetch_data('AAPL', period='1y', interval='1d')
-df2 = data_loader.fetch('AAPL', period='1y', columns=['Open', 'Close'])
+df2 = data_loader.fetch_data('AAPL', period='1y', columns=['Open', 'Close'])
 print(df1.head())
 print(df2.head())
 ```
@@ -188,5 +188,12 @@ print(result_df)
 
 **Testing:**
 - Unit tests in `tests/test_strategies.py` verify the functionality of the `BaseStrategy` class and the `generate_sma_crossover_signals` function.
-- Unit tests in `tests/test_apply_strategy.py` verify the functionality of the `apply_strategy` function, including error handling and signal generation.
-- Tests ensure that signals are correctly generated based on the strategy parameters.
+- Comprehensive unit tests in `tests/test_apply_strategy.py` verify the functionality of the `apply_strategy` function, including:
+  - Correct signal generation for SMA crossover strategy
+  - Proper handling of valid and invalid strategy_params (missing keys, incorrect types)
+  - Behavior with different fast_sma and slow_sma column names
+  - Error handling for unsupported strategy types
+  - Edge cases (empty DataFrame, DataFrame with NaNs in feature columns)
+  - Appropriate logging behavior
+  - Preservation of the original DataFrame
+- These tests ensure the reliability and correctness of the strategy application logic, providing confidence in backtesting results.

@@ -51,7 +51,9 @@ def _cached_fetch_data(ticker: str, period: str, interval: str) -> pd.DataFrame:
 def fetch_data(
     ticker: str,
     period: str = "max",
-    interval: str = "1d"
+    interval: str = "1d",
+    columns: List[str] = None,
+    use_cache: bool = True
 ) -> pd.DataFrame:
     """
     Fetch historical stock data for a given ticker, period, and interval using yfinance.
@@ -60,9 +62,11 @@ def fetch_data(
         ticker (str): Stock ticker symbol (e.g., 'AAPL').
         period (str, optional): Data period (e.g., '1y', '6mo', 'max'). Defaults to 'max'.
         interval (str, optional): Data interval (e.g., '1d', '1wk'). Defaults to '1d'.
+        columns (List[str], optional): List of columns to return. If None, returns standard columns.
+        use_cache (bool, optional): Whether to use cached data if available. Defaults to True.
 
     Returns:
-        pd.DataFrame: DataFrame with columns ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'].
+        pd.DataFrame: DataFrame with requested columns (default: ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']).
 
     Raises:
         ValueError: If input parameters are invalid or data is empty.
@@ -72,10 +76,23 @@ def fetch_data(
     """
     validate_ticker(ticker)
     validate_period(period)
+    
     logging.info(f"Fetching data for {ticker} with period '{period}' and interval '{interval}'")
-    data = _cached_fetch_data(ticker, period, interval)
-    validate_columns(data, ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
-    return data[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']]
+    
+    if use_cache:
+        data = _cached_fetch_data(ticker, period, interval)
+    else:
+        data = _fetch_data(ticker, period, interval)
+    
+    default_columns = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+    
+    # If columns specified, validate they exist
+    if columns:
+        validate_columns(data, columns)
+        return data[columns]
+    else:
+        validate_columns(data, default_columns)
+        return data[default_columns]
 
 def fetch(
     ticker: str,
@@ -85,6 +102,9 @@ def fetch(
 ) -> pd.DataFrame:
     """
     Fetch historical stock data for a given ticker and period.
+    
+    This function is a backward-compatibility wrapper around fetch_data.
+    For new code, prefer using fetch_data directly.
     
     Args:
         ticker (str): Stock ticker symbol (e.g., 'AAPL').
@@ -98,20 +118,10 @@ def fetch(
     Raises:
         ValueError: If input parameters are invalid or data is empty.
     """
-    validate_ticker(ticker)
-    validate_period(period)
-    
-    logging.info(f"Fetching data for {ticker} with period '{period}'")
-    
-    if use_cache:
-        data = _cached_fetch_data(ticker, period, "1d")
-    else:
-        data = _fetch_data(ticker, period, "1d")
-    
-    # If columns specified, validate they exist
-    if columns:
-        validate_columns(data, columns)
-        return data[columns]
-    else:
-        validate_columns(data, ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
-        return data
+    return fetch_data(
+        ticker=ticker,
+        period=period,
+        interval="1d",
+        columns=columns,
+        use_cache=use_cache
+    )
