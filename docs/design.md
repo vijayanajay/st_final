@@ -139,16 +139,41 @@ The application will consist of the following Python modules:
         *   Orchestrator function within this module.
         *   Input: DataFrame from `data_loader`, feature configuration dictionary.
         *   Output: DataFrame with original data + new feature columns.
-        *   This function iterates through the feature_config dictionary where keys are feature names (e.g., "sma", "price_change_pct_1d", "volatility_nday") and values are their parameters. For each feature, it calls the corresponding add_* function with the provided parameters.
+        *   This function supports multiple configurations for the same feature type (e.g., multiple SMAs with different window sizes).
+        *   The feature_config parameter can be structured in three different ways:
+        
+          1. Named feature instances with a 'type' field:
+             ```python
+             {
+                 "SMA_short": {"type": "sma", "column": "close", "window": 20},
+                 "SMA_long": {"type": "sma", "column": "close", "window": 50},
+                 "Custom_Volatility": {"type": "volatility_nday", "column": "close", "window": 30}
+             }
+             ```
+
+          2. Predefined list keys for multiple configurations of the same feature type:
+             ```python
+             {
+                 "smas": [
+                     {"name": "SMA_short", "column": "close", "window": 20},
+                     {"name": "SMA_long", "column": "close", "window": 50}
+                 ],
+                 "volatility_metrics": [
+                     {"name": "volatility_20", "column": "close", "window": 20}
+                 ]
+             }
+             ```
+             Valid list keys are: `"smas"`, `"price_changes"`, `"volatility_metrics"`
+
+          3. Legacy format (for backward compatibility):
+             ```python
+             {
+                 "sma": {"column": "close", "window": 20},
+                 "price_change_pct_1d": {"column": "close"},
+                 "volatility_nday": {"column": "close", "window": 20}
+             }
+             ```
         *   This design provides more flexibility than coupling directly to strategy parameters, as it allows any combination of features to be generated based on the configuration, regardless of the strategy that will use them.
-        *   Example feature_config structure:
-          ```python
-          {
-              "sma": {"column": "close", "window": 20},
-              "price_change_pct_1d": {"column": "close"},
-              "volatility_nday": {"column": "close", "window": 20}
-          }
-          ```
 *   **Key Data Structures:** Pandas DataFrame.
 *   **Applicable Design Patterns:** Functions act as simple feature calculators.
 *   **Interaction with other components:** Called by `main.py`. Takes DataFrame and strategy parameters.
