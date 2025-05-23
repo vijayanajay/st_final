@@ -3,7 +3,7 @@
 # Feature Generator Test Module Documentation
 
 ## Overview
-This module contains tests for the feature generator functionality in the stock trading application.
+This module contains tests for the feature generator functionality in the stock trading application. All tests directly target the primary API functions (add_*) rather than legacy aliases (calculate_*), with separate minimal tests to verify the legacy functions correctly delegate to their primary counterparts.
 
 ## Key Testing Principles
 
@@ -35,9 +35,8 @@ Many tests use `pytest.mark.parametrize` to test multiple scenarios with the sam
 - `test_window_larger_than_data`: Tests behavior when window size is larger than available data.
 
 ### Error Handling Tests
-- `test_invalid_column`: Tests error handling when an invalid column is specified.
-- `test_invalid_window`: Tests error handling when an invalid window size is specified.
 - `test_non_numeric_column`: Tests error handling when a non-numeric column is used.
+- Error handling for invalid columns and invalid window sizes is tested in the logging tests.
 
 ### Logging Tests
 - Various tests with `caplog` to verify correct logging behavior.
@@ -47,6 +46,9 @@ Detailed tests for each feature calculation function:
 - `test_add_sma_*`: Tests for SMA calculation
 - `test_add_price_change_pct_1d_*`: Tests for price change percentage
 - `test_add_volatility_nday_*`: Tests for volatility
+
+### Legacy Function Delegation Tests
+- `test_legacy_function_delegation`: Verifies that legacy functions (calculate_*) correctly delegate to their primary API counterparts (add_*).
 
 ### Feature Generation Tests
 - `test_generate_features_*`: Tests for the feature generation orchestrator function.

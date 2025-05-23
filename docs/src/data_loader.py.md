@@ -85,7 +85,8 @@ print(df.head())
 
 ## Testing
 - Unit tests in `tests/test_data_loader.py` use mocks for yfinance. All mocks and test DataFrames must include 'Adj Close' in the default columns.
-- Comprehensive tests cover both `fetch_data` and `fetch` functions, including validation, column selection, cache control, and error handling.
+- Comprehensive tests focus on the primary `fetch_data` function, including validation, column selection, cache control, and error handling.
+- The `fetch` function is tested only with a single targeted test `test_fetch_delegates_to_fetch_data` that verifies it correctly delegates to the primary function.
 - Integration tests (recommended) should verify real API behavior (optionally skipped by default).
 
 ## Notes

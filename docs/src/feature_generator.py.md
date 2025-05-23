@@ -5,6 +5,16 @@
 ## Overview
 This module provides feature engineering utilities for stock trading, including calculation of Simple Moving Averages (SMA).
 
+### API Design
+The module follows a clear API design pattern:
+- Primary API Functions: The `add_*` functions (e.g., `add_sma`, `add_price_change_pct_1d`, `add_volatility_nday`) are the primary interface for this module.
+- Legacy Aliases: The `calculate_*` functions are provided only for backward compatibility and delegate to their respective primary API functions.
+
+### Testing Philosophy
+- All tests directly target the primary API functions (`add_*`) with complete test coverage.
+- Legacy aliases (`calculate_*`) have minimal tests to verify they correctly delegate to their primary counterparts.
+- This ensures the documented public interface is thoroughly tested while maintaining backward compatibility.
+
 ## Functions
 
 ### add_sma

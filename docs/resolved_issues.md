@@ -50,6 +50,21 @@
 **Initial Resolution Summary (Concise):** As of 2025-05-24, removed the duplicate definition of `PortfolioData` NamedTuple while maintaining all functionality and test coverage. The module now has a single, clean definition of the `PortfolioData` class.
 **Date First Resolved:** 2025-05-24
 **Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Removed the duplicate definition of `PortfolioData` NamedTuple while maintaining all functionality and test coverage. The module now has a single, clean definition of the `PortfolioData` class.
+**Date Last Resolved:** 2025-05-24
+---
+
+---
+**Issue ID:** API-001
+**Original Description (Concise):** Architectural Degeneration in Test Suite. The test suite for the feature generator primarily targeted legacy alias functions (calculate_*) instead of designated primary API functions (add_*). This created a dangerous disconnect between testing strategy and documented API design.
+**Initial Resolution Summary (Concise):** As of 2025-05-24, refactored all parameterized tests in tests/test_feature_generator.py to directly call the primary add_* functions. Created a separate, minimal test for legacy calculate_* functions that verifies they correctly delegate to the corresponding add_* function.
+**Date First Resolved:** 2025-05-24
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Refactored all tests to target the primary API functions directly. Added a dedicated test to verify legacy functions delegate correctly. Updated documentation to reflect these changes.
+**Date Last Resolved:** 2025-05-24
+**Reopen Count:** 0
 **Last Reopened Date:** 
 **Last Resolution Summary (Concise):** Removed the duplicate definition of `PortfolioData` NamedTuple while maintaining all functionality and test coverage. Verified that all tests continue to pass.
 **Date Last Resolved:** 2025-05-24
@@ -145,5 +160,16 @@
 **Reopen Count:** 0
 **Last Reopened Date:**
 **Last Resolution Summary (Concise):** Corrected the test assertions to validate the exact expected behavior based on the backtesting logic. Updated documentation in `docs/src/backtester.py.md`, `docs/codebase_overview.md`, and `docs/file_structure.md` to clearly state that portfolio composition should be exactly 0% cash/100% equity when in position, and 100% cash/0% equity otherwise.
+**Date Last Resolved:** 2025-05-24
+---
+
+---
+**Issue ID:** TEST-006
+**Original Description (Concise):** Test Code Quality Degradation in `tests/test_data_loader.py`. The test file contained two nearly identical, extensive sets of tests: one for the legacy `fetch` function and one for the primary `fetch_data` function, violating the DRY principle.
+**Initial Resolution Summary (Concise):** As of 2025-05-24, refactored `tests/test_data_loader.py` to remove all redundant tests for the `fetch` function, keeping only the single, targeted test `test_fetch_delegates_to_fetch_data` that verifies the wrapper's behavior.
+**Date First Resolved:** 2025-05-24
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Removed all redundant tests for the `fetch` function while keeping the comprehensive test suite for the primary `fetch_data` function. Retained only the single test that verifies the `fetch` function correctly delegates to `fetch_data`. This significantly reduced code duplication while maintaining full functional coverage of the API.
 **Date Last Resolved:** 2025-05-24
 ---

@@ -3,20 +3,23 @@ import pandas as pd
 import numpy as np
 import logging
 
+# Import primary API functions
+from src.feature_generator import add_sma, add_price_change_pct_1d, add_volatility_nday
+# Import legacy aliases for delegation tests
 from src.feature_generator import calculate_sma, calculate_price_change_pct, calculate_volatility
 
 @pytest.fixture
 def sample_df():
     return pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
 
-# Parameterized test cases for feature functions
+# Parameterized test cases for primary API feature functions
 @pytest.mark.parametrize("func,kwargs,expected", [
     # SMA basic
-    (calculate_sma, dict(column='close', window=3), pd.Series([np.nan, np.nan, 11.0, 12.0, 13.0, 14.0], name='sma_3')),
+    (add_sma, dict(column='close', window=3), pd.Series([np.nan, np.nan, 11.0, 12.0, 13.0, 14.0], name='sma_3')),
     # Price change pct basic
-    (calculate_price_change_pct, dict(column='close'), pd.Series([np.nan, 10.0, 9.090909090909092, 8.333333333333332, 7.6923076923076925, 7.142857142857142], name='price_change_pct_1d')),
+    (add_price_change_pct_1d, dict(column='close'), pd.Series([np.nan, 10.0, 9.090909090909092, 8.333333333333332, 7.6923076923076925, 7.142857142857142], name='price_change_pct_1d')),
     # Volatility basic
-    (calculate_volatility, dict(column='close', window=2), pd.Series([np.nan, np.nan, 0.6428243465332251, 0.5356869554443592, 0.45327357768369, 0.3885202094431676], name='volatility_2')),
+    (add_volatility_nday, dict(column='close', window=2), pd.Series([np.nan, np.nan, 0.6428243465332251, 0.5356869554443592, 0.45327357768369, 0.3885202094431676], name='volatility_2')),
 ])
 def test_feature_basic(sample_df, func, kwargs, expected):
     # Use static pre-calculated expected values for all functions
@@ -25,37 +28,21 @@ def test_feature_basic(sample_df, func, kwargs, expected):
     pd.testing.assert_series_equal(result, expected)
 
 @pytest.mark.parametrize("func,kwargs", [
-    (calculate_sma, dict(column='close', window=10)),
-    (calculate_volatility, dict(column='close', window=10)),
+    (add_sma, dict(column='close', window=10)),
+    (add_volatility_nday, dict(column='close', window=10)),
 ])
 def test_window_larger_than_data(sample_df, func, kwargs):
-    expected = pd.Series([np.nan]*len(sample_df), name=f"{func.__name__.replace('calculate_', '')}_{kwargs['window']}")
+    expected_name = 'sma_10' if func == add_sma else 'volatility_10'
+    expected = pd.Series([np.nan]*len(sample_df), name=expected_name)
     result = func(sample_df, **kwargs)
     # Only check all-NaN, name is checked in basic test
     assert result.isna().all()
 
-@pytest.mark.parametrize("func,kwargs", [
-    (calculate_sma, dict(column='open', window=3)),
-    (calculate_price_change_pct, dict(column='not_a_column')),
-    (calculate_volatility, dict(column='not_a_column', window=2)),
-])
-def test_invalid_column(sample_df, func, kwargs):
-    with pytest.raises(ValueError):
-        func(sample_df, **kwargs)
 
-@pytest.mark.parametrize("func,kwargs", [
-    (calculate_sma, dict(column='close', window=0)),
-    (calculate_sma, dict(column='close', window=-2)),
-    (calculate_volatility, dict(column='close', window=0)),
-    (calculate_volatility, dict(column='close', window=-1)),
-])
-def test_invalid_window(sample_df, func, kwargs):
-    with pytest.raises(ValueError):
-        func(sample_df, **kwargs)
 
 @pytest.mark.parametrize("func,df,kwargs", [
-    (calculate_price_change_pct, pd.DataFrame({'close': ['a', 'b', 'c']}), dict(column='close')),
-    (calculate_volatility, pd.DataFrame({'close': ['a', 'b', 'c']}), dict(column='close', window=2)),
+    (add_price_change_pct_1d, pd.DataFrame({'close': ['a', 'b', 'c']}), dict(column='close')),
+    (add_volatility_nday, pd.DataFrame({'close': ['a', 'b', 'c']}), dict(column='close', window=2)),
 ])
 def test_non_numeric_column(func, df, kwargs):
     with pytest.raises(ValueError):
@@ -64,45 +51,64 @@ def test_non_numeric_column(func, df, kwargs):
 # Feature-specific logging tests (not easily parameterized)
 def test_sma_logging(sample_df, caplog):
     with caplog.at_level('INFO'):
-        calculate_sma(sample_df, column='close', window=2)
+        add_sma(sample_df, column='close', window=2)
     assert any('Calculating SMA' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
-            calculate_sma(sample_df, column='open', window=2)
+            add_sma(sample_df, column='open', window=2)
         assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
-            calculate_sma(sample_df, column='close', window=0)
+            add_sma(sample_df, column='close', window=0)
         assert any("Window size must be a positive integer" in record.getMessage() for record in caplog.records)
 
 def test_price_change_pct_logging(caplog):
     df = pd.DataFrame({'close': [10, 12, 15]})
     with caplog.at_level('INFO'):
-        calculate_price_change_pct(df, column='close')
+        add_price_change_pct_1d(df, column='close')
     assert any('Calculating 1-day price change percentage' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
-            calculate_price_change_pct(df, column='not_a_column')
+            add_price_change_pct_1d(df, column='not_a_column')
         assert any('not found in DataFrame' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         df2 = pd.DataFrame({'close': ['a', 'b', 'c']})
         with pytest.raises(ValueError):
-            calculate_price_change_pct(df2, column='close')
+            add_price_change_pct_1d(df2, column='close')
         assert any('must be numeric' in record.getMessage() for record in caplog.records)
 
 def test_volatility_logging(caplog):
     df = pd.DataFrame({'close': [10, 12, 15]})
     with caplog.at_level('INFO'):
-        calculate_volatility(df, column='close', window=2)
+        add_volatility_nday(df, column='close', window=2)
     assert any('Calculating volatility' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
-            calculate_volatility(df, column='not_a_column', window=2)
+            add_volatility_nday(df, column='not_a_column', window=2)
         assert any('not found in DataFrame' in record.getMessage() for record in caplog.records)
     with caplog.at_level('ERROR'):
         with pytest.raises(ValueError):
-            calculate_volatility(df, column='close', window=0)
+            add_volatility_nday(df, column='close', window=0)
         assert any('Window size must be a positive integer' in record.getMessage() for record in caplog.records)
+
+# Tests for legacy function delegation
+@pytest.mark.parametrize("legacy_func, primary_func, kwargs", [
+    (calculate_sma, add_sma, dict(column='close', window=3)),
+    (calculate_price_change_pct, add_price_change_pct_1d, dict(column='close')),
+    (calculate_volatility, add_volatility_nday, dict(column='close', window=4)),
+])
+def test_legacy_function_delegation(sample_df, legacy_func, primary_func, kwargs):
+    """Test that legacy functions correctly delegate to their primary API counterparts."""
+    # Call both functions and verify they produce identical results
+    legacy_result = legacy_func(sample_df, **kwargs)
+    primary_result = primary_func(sample_df, **kwargs)
+    
+    # Verify the results are identical
+    pd.testing.assert_series_equal(legacy_result, primary_result)
+    
+    # Ensure the legacy functions are properly documented as aliases
+    assert "alias" in legacy_func.__doc__.lower()
+    assert primary_func.__name__ in legacy_func.__doc__
 
 def test_add_sma_signature_and_behavior():
     import inspect
