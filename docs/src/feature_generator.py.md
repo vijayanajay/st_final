@@ -36,6 +36,7 @@ Adds Simple Moving Average (SMA) to the DataFrame.
 
 **Testing:**
 - All functions are tested in `tests/test_feature_generator.py` for correctness, edge cases, and error handling.
+- Tests use static, pre-calculated expected values rather than dynamic recalculation to ensure independent verification of function correctness.
 - Logging of error conditions is explicitly tested using pytest's `caplog` fixture to ensure observability and compliance with project requirements.
 
 **Example:**
@@ -92,6 +93,7 @@ Adds 1-day price change percentage to the DataFrame. The result is `(current - p
 
 **Testing:**
 - All functions are tested in `tests/test_feature_generator.py` for correctness, edge cases, and error handling.
+- Tests use static, pre-calculated expected values rather than dynamic recalculation to ensure independent verification of function correctness.
 - Logging of error conditions is explicitly tested using pytest's `caplog` fixture to ensure observability and compliance with project requirements.
 
 **Example:**
@@ -149,6 +151,7 @@ Adds n-day rolling volatility to the DataFrame. The result is the rolling std of
 
 **Testing:**
 - All functions are tested in `tests/test_feature_generator.py` for correctness, edge cases, and error handling.
+- Tests use static, pre-calculated expected values rather than dynamic recalculation to ensure independent verification of function correctness.
 - Logging of error conditions is explicitly tested using pytest's `caplog` fixture to ensure observability and compliance with project requirements.
 
 **Example:**

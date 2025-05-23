@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 16  
-**Remaining**: 14  
-**Progress**: 53%
+**Completed**: 17  
+**Remaining**: 13  
+**Progress**: 57%
 
 ## Tasks
 
@@ -32,7 +32,7 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 14. [x] **Create strategies.py module** - Set up base structure for strategy implementations. File: `src/strategies.py`. Test File: `tests/test_strategies.py`. Docs: `docs/src/strategies.py.md`
 15. [x] **Implement SMA crossover strategy** - Create function for SMA crossover signal generation
 16. [x] **Add signal generation utility** - Create function to apply strategy to dataframe and generate signals. File: `src/strategies.py`. Test File: `tests/test_apply_strategy.py`. Implemented and tested.
-17. [ ] **Write tests for strategies.py** - Create pytest tests for strategy implementations
+17. [x] **Write tests for strategies.py** - Create pytest tests for strategy implementations
 
 ### Backtester Module (0/5)
 18. [ ] **Create backtester.py with simulation structure** - Set up framework for simulating trades

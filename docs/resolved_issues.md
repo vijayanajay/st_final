@@ -51,17 +51,17 @@
 **Date First Resolved:** 2025-05-23
 **Reopen Count:** 0
 **Last Reopened Date:**
-**Last Resolution Summary (Concise):** Updated `docs/design.md` Section 4.4 to match the implemented behavior in `src/feature_generator.py`. The implemented feature_config approach was determined to be superior to the originally designed strategy_params approach as it provides better separation of concerns and more flexibility in feature generation. The documentation now correctly describes the function signature as `generate_features(df: pd.DataFrame, feature_config: dict) -> pd.DataFrame` and explains how the feature_config dictionary is used to generate features.
+**Last Resolution Summary (Concise):** Updated `docs/design.md` to accurately reflect the implementation of `generate_features`. This ensures consistency between documentation and code, reducing confusion for developers. The implemented approach (feature_config) was determined to be superior to the originally designed approach (strategy_params) due to its flexibility and extensibility. Updated `docs/design.md` Section 4.4 to match the implemented behavior in `src/feature_generator.py`. The implemented feature_config approach was determined to be superior to the originally designed strategy_params approach as it provides better separation of concerns and more flexibility in feature generation. The documentation now correctly describes the function signature as `generate_features(df: pd.DataFrame, feature_config: dict) -> pd.DataFrame` and explains how the feature_config dictionary is used to generate features.
 **Date Last Resolved:** 2025-05-23
 ---
 
 ---
-**Issue ID:** API-001
-**Original Description (Concise):** Dual Interfaces and Documentation Mismatch in `data_loader.py`. Two similar public functions (`fetch_data` and `fetch`) existed with disparate feature sets, potentially causing API confusion for developers. The officially designed `fetch_data` function in `docs/design.md` lacked the enhanced capabilities of the `fetch` function.
-**Initial Resolution Summary (Concise):** As of 2025-05-23, enhanced the `fetch_data` function to include all capabilities of `fetch` (column selection, cache control), made `fetch` a thin wrapper around `fetch_data` for backward compatibility, and updated all relevant documentation.
+**Issue ID:** TEST-004
+**Original Description (Concise):** Suboptimal Test Implementation in `test_feature_generator.py`. The test dynamically recalculated expected values for `calculate_volatility` and `calculate_price_change_pct` within the test execution flow instead of comparing against static, pre-defined expected values.
+**Initial Resolution Summary (Concise):** As of 2025-05-23, refactored all tests to use static, pre-calculated expected values rather than dynamic recalculation. This ensures independent verification of function correctness and prevents masking bugs between test and implementation logic.
 **Date First Resolved:** 2025-05-23
 **Reopen Count:** 0
-**Last Reopened Date:** 
-**Last Resolution Summary (Concise):** Enhanced `fetch_data` to support column selection and cache control parameters, making it the comprehensive primary interface as intended in the design. Refactored `fetch` to be a backward-compatibility wrapper that calls `fetch_data`. Updated all documentation (design.md, codebase_overview.md, file_structure.md, data_loader.py.md) to reflect these changes. Comprehensive tests for both functions have been implemented in test_data_loader.py.
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Refactored all tests in `test_feature_generator.py` to use static, pre-calculated expected values. Updated documentation in `docs/src/feature_generator.py.md` to emphasize the correct testing approach. Added a new documentation file `docs/tests/test_feature_generator.py.md` to explain the testing principles and practices.
 **Date Last Resolved:** 2025-05-23
 ---

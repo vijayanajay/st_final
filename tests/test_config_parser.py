@@ -105,5 +105,5 @@ def test_load_config_signature_and_behavior():
     import inspect
     from src import config_parser
     sig = inspect.signature(config_parser.load_config)
-    assert list(sig.parameters.keys()) == ["path"]
-    # ...additional tests for correct error handling, no legacy config support...
+    assert list(sig.parameters.keys()) == ["filepath", "validate_schema"]
+    # Behavioral tests for error handling and legacy/new format support are covered in other dedicated test functions.

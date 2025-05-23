@@ -16,17 +16,11 @@ def sample_df():
     # Price change pct basic
     (calculate_price_change_pct, dict(column='close'), pd.Series([np.nan, 10.0, 9.090909090909092, 8.333333333333332, 7.6923076923076925, 7.142857142857142], name='price_change_pct_1d')),
     # Volatility basic
-    (calculate_volatility, dict(column='close', window=2), pd.Series([np.nan, np.nan, 0.6464466094067263, 0.5354837503184306, 0.4714045207910317, 0.408248290463863], name='volatility_2')),
+    (calculate_volatility, dict(column='close', window=2), pd.Series([np.nan, np.nan, 0.6428243465332251, 0.5356869554443592, 0.45327357768369, 0.3885202094431676], name='volatility_2')),
 ])
 def test_feature_basic(sample_df, func, kwargs, expected):
-    # For volatility, recalculate expected dynamically for robustness
-    if func is calculate_volatility:
-        price_change = (sample_df['close'] - sample_df['close'].shift(1)) / sample_df['close'].shift(1) * 100
-        expected = price_change.rolling(window=kwargs['window'], min_periods=kwargs['window']).std()
-        expected.name = f"volatility_{kwargs['window']}"
-    if func is calculate_price_change_pct:
-        expected = (sample_df['close'] - sample_df['close'].shift(1)) / sample_df['close'].shift(1) * 100
-        expected.name = 'price_change_pct_1d'
+    # Use static pre-calculated expected values for all functions
+    # No dynamic recalculation to ensure independent verification
     result = func(sample_df, **kwargs)
     pd.testing.assert_series_equal(result, expected)
 
@@ -288,19 +282,16 @@ def test_add_volatility_nday_with_valid_inputs():
     # Basic test case
     df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
     result = add_volatility_nday(df, 'close', 2)
-    # Manually calculate expected result for validation
-    price_change = (df['close'] - df['close'].shift(1)) / df['close'].shift(1) * 100
-    expected = price_change.rolling(window=2, min_periods=2).std()
-    expected.name = 'volatility_2'
+    # Use static pre-calculated expected values for independent verification
+    expected = pd.Series([np.nan, np.nan, 0.6428243465332251, 0.5356869554443592, 0.45327357768369, 0.3885202094431676], 
+                         name='volatility_2')
     pd.testing.assert_series_equal(result, expected)
-    
-    # Different column name
+      # Different column name
     df = pd.DataFrame({'price': [10, 11, 12, 13, 14, 15]})
     result = add_volatility_nday(df, 'price', 3)
-    # Manually calculate expected result
-    price_change = (df['price'] - df['price'].shift(1)) / df['price'].shift(1) * 100
-    expected = price_change.rolling(window=3, min_periods=3).std()
-    expected.name = 'volatility_3'
+    # Use static pre-calculated expected values
+    expected = pd.Series([np.nan, np.nan, np.nan, 0.834480385952441, 0.700109607262632, 0.5958248258834902], 
+                         name='volatility_3')
     pd.testing.assert_series_equal(result, expected)
     
     # Default parameters
@@ -323,18 +314,16 @@ def test_add_volatility_nday_with_edge_cases():
     # DataFrame with NaNs not at the start
     df = pd.DataFrame({'close': [10, np.nan, 12, 13, np.nan, 15]})
     result = add_volatility_nday(df, window=2)
-    # With NaNs in the data, the calculations should handle them appropriately
-    price_change = (df['close'] - df['close'].shift(1)) / df['close'].shift(1) * 100
-    expected = price_change.rolling(window=2, min_periods=2).std()
-    expected.name = 'volatility_2'
+    # Use static pre-calculated expected values
+    expected = pd.Series([np.nan, np.nan, np.nan, np.nan, np.nan, np.nan], name='volatility_2')
     pd.testing.assert_series_equal(result, expected)
     
     # DataFrame with mixed data types (but still numeric)
     df = pd.DataFrame({'close': [10, 11.5, 12, 13.7, 14, 15.2]})
     result = add_volatility_nday(df, window=3)
-    price_change = (df['close'] - df['close'].shift(1)) / df['close'].shift(1) * 100
-    expected = price_change.rolling(window=3, min_periods=3).std()
-    expected.name = 'volatility_3'
+    # Use static pre-calculated expected values
+    expected = pd.Series([np.nan, np.nan, np.nan, 5.924143874124078, 6.383736870366459, 5.992744287006658], 
+                         name='volatility_3')
     pd.testing.assert_series_equal(result, expected)
 
 def test_add_volatility_nday_raises_appropriate_errors():
@@ -403,10 +392,9 @@ def test_generate_features_with_valid_configs():
     result = generate_features(df, feature_config)
     assert "volatility_2" in result.columns
     assert list(result.columns) == ["close", "volatility_2"]
-    # Manually calculate expected result for validation
-    close_change = (df['close'] - df['close'].shift(1)) / df['close'].shift(1) * 100
-    expected_vol = close_change.rolling(window=2, min_periods=2).std()
-    expected_vol.name = 'volatility_2'
+    # Use static pre-calculated expected values
+    expected_vol = pd.Series([np.nan, np.nan, 0.6428243465332251, 0.5356869554443592, 0.45327357768369, 0.3885202094431676], 
+                             name='volatility_2')
     pd.testing.assert_series_equal(result["volatility_2"], expected_vol)
 
 def test_generate_features_with_multiple_features():
@@ -431,7 +419,7 @@ def test_generate_features_with_multiple_features():
     assert "volatility_2" in result.columns
     assert list(result.columns) == ["close", "sma_3", "price_change_pct_1d", "volatility_2"]
     
-    # Verify each feature has correct values
+    # Verify each feature has correct values using static pre-calculated expected values
     expected_sma = pd.Series([np.nan, np.nan, 11.0, 12.0, 13.0, 14.0], name='sma_3')
     pd.testing.assert_series_equal(result["sma_3"], expected_sma)
     
@@ -439,9 +427,8 @@ def test_generate_features_with_multiple_features():
                              name='price_change_pct_1d')
     pd.testing.assert_series_equal(result["price_change_pct_1d"], expected_pct)
     
-    close_change = (df['close'] - df['close'].shift(1)) / df['close'].shift(1) * 100
-    expected_vol = close_change.rolling(window=2, min_periods=2).std()
-    expected_vol.name = 'volatility_2'
+    expected_vol = pd.Series([np.nan, np.nan, 0.6428243465332251, 0.5356869554443592, 0.45327357768369, 0.3885202094431676], 
+                             name='volatility_2')
     pd.testing.assert_series_equal(result["volatility_2"], expected_vol)
 
 def test_generate_features_with_empty_config():

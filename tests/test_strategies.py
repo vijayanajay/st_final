@@ -69,3 +69,68 @@ def test_generate_sma_crossover_signals_signature_and_behavior():
     from src import strategies
     sig = inspect.signature(strategies.generate_sma_crossover_signals)
     assert list(sig.parameters.keys()) == ["df_with_features", "short_window_col", "long_window_col"]
+
+def test_generate_sma_crossover_signals_nans():
+    """
+    Tests handling of NaN values in SMA columns.
+    """
+    import numpy as np
+    from src.strategies import generate_sma_crossover_signals
+    df = pd.DataFrame({
+        'SMA_short': [np.nan, 1, 2, np.nan, 4],
+        'SMA_long':  [1, np.nan, 2, 3, np.nan]
+    })
+    expected = pd.Series([0, 0, 0, 0, 0], name="signal")
+    actual = generate_sma_crossover_signals(df)
+    assert_series_equal(actual, expected, check_dtype=False)
+
+def test_generate_sma_crossover_signals_always_equal():
+    """
+    Tests when short and long SMAs are always equal (no crossovers).
+    """
+    from src.strategies import generate_sma_crossover_signals
+    df = pd.DataFrame({'SMA_short': [5, 5, 5, 5], 'SMA_long': [5, 5, 5, 5]})
+    expected = pd.Series([0, 0, 0, 0], name="signal")
+    actual = generate_sma_crossover_signals(df)
+    assert_series_equal(actual, expected, check_dtype=False)
+
+def test_generate_sma_crossover_signals_no_crossovers():
+    """
+    Tests when short SMA is always above long SMA (no crossovers).
+    """
+    from src.strategies import generate_sma_crossover_signals
+    df = pd.DataFrame({'SMA_short': [10, 10, 10, 10], 'SMA_long': [5, 5, 5, 5]})
+    expected = pd.Series([0, 0, 0, 0], name="signal")
+    actual = generate_sma_crossover_signals(df)
+    assert_series_equal(actual, expected, check_dtype=False)
+
+def test_generate_sma_crossover_signals_empty():
+    """
+    Tests behavior with empty DataFrame.
+    """
+    from src.strategies import generate_sma_crossover_signals
+    df = pd.DataFrame({'SMA_short': [], 'SMA_long': []})
+    expected = pd.Series([], dtype=int, name="signal")
+    actual = generate_sma_crossover_signals(df)
+    assert_series_equal(actual, expected, check_dtype=False)
+
+def test_generate_sma_crossover_signals_too_short():
+    """
+    Tests DataFrame shorter than signal period (should be all HOLD).
+    """
+    from src.strategies import generate_sma_crossover_signals
+    df = pd.DataFrame({'SMA_short': [1], 'SMA_long': [1]})
+    expected = pd.Series([0], name="signal")
+    actual = generate_sma_crossover_signals(df)
+    assert_series_equal(actual, expected, check_dtype=False)
+
+def test_generate_sma_crossover_signals_signal_at_edges():
+    """
+    Tests if signals can occur at the very beginning or end.
+    """
+    from src.strategies import generate_sma_crossover_signals
+    df = pd.DataFrame({'SMA_short': [1, 2, 1, 2], 'SMA_long': [2, 1, 2, 1]})
+    # Only at index 1 and 3 should there be a BUY (cross above), and at index 2 a SELL (cross below)
+    expected = pd.Series([0, 1, -1, 1], name="signal")
+    actual = generate_sma_crossover_signals(df)
+    assert_series_equal(actual, expected, check_dtype=False)

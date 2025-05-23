@@ -50,6 +50,15 @@ signals = generate_sma_crossover_signals(data, short_window_col='sma_5', long_wi
 print(signals)
 ```
 
+---
+
+**Note on Design Deviation:**
+The implementation of `generate_sma_crossover_signals` differs slightly from the specification in `docs/design.md` (Section 4.5):
+- It returns a `pd.Series` (named 'signal') instead of a `pd.DataFrame`, as a Series is more direct for a single signal column.
+- The `short_window_col` and `long_window_col` parameters have default values, making them optional for convenience, whereas the design listed them as mandatory.
+
+These changes were made for practical implementation benefits and are reflected in the function's documentation and usage examples above.
+
 ## Signal Logic
 
 The function generates signals based on the following crossover rules:
@@ -124,3 +133,16 @@ The `apply_strategy` function is thoroughly tested in `tests/test_apply_strategy
 8. **Original DataFrame preservation**: Tests that the original DataFrame is not modified.
 
 These tests ensure the reliability and correctness of the strategy application logic, providing confidence in backtesting results.
+
+### Testing
+The `generate_sma_crossover_signals` function is thoroughly tested in `tests/test_strategies.py` with the following test cases:
+
+1. **Basic functionality**: Tests correct signal generation for BUY, SELL, and HOLD scenarios.
+2. **NaNs in SMA columns**: Tests proper handling of NaN values in short and long SMA columns.
+3. **Always-equal SMAs**: Tests when short and long SMAs are always equal (no crossovers).
+4. **No crossovers**: Tests when one SMA is always greater than the other (no crossovers).
+5. **Empty DataFrame**: Tests handling of an empty DataFrame.
+6. **Very short DataFrame**: Tests DataFrame shorter than any potential signal period (should be all HOLD).
+7. **Signals at edges**: Tests if signals can occur at the very beginning or end of the DataFrame.
+
+All tests use static, pre-calculated expected values and `pd.testing.assert_series_equal` for robust comparison. These tests ensure the reliability and correctness of the core signal generation logic, providing confidence in backtesting results.
