@@ -197,3 +197,18 @@ print(result_df)
   - Appropriate logging behavior
   - Preservation of the original DataFrame
 - These tests ensure the reliability and correctness of the strategy application logic, providing confidence in backtesting results.
+
+## backtester.py
+
+**Location:** src/backtester.py
+
+**Purpose:**
+Provides the simulation framework for backtesting trading strategies based on generated signals. The main interface is `run_backtest`, which accepts a DataFrame with signals and prices, an initial capital amount, and returns a trade log and portfolio value series. Only the function skeleton and input validation are implemented as of 2025-05-23.
+
+**Key Functions:**
+- `run_backtest(df_with_signals: pd.DataFrame, initial_capital: float, signal_col: str = 'Signal', price_col: str = 'Close') -> tuple[list[dict], pd.Series]`
+    - **Primary interface as specified in design.md.**
+    - Simulates trading based on signals in the DataFrame.
+    - **Returns:** Tuple of trade log (list of dict) and portfolio values (pd.Series). Currently returns empty structures.
+    - **Raises:** ValueError if required columns are missing.
+    - **Logging:** Prints a message when called (to be replaced with structured logging in future tasks).

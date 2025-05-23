@@ -10,6 +10,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `feature_generator.py` — Provides feature engineering utilities for stock trading strategies. The primary interface consists of add_sma, add_price_change_pct_1d, add_volatility_nday, and the generate_features orchestrator, all of which add features directly to DataFrames with robust input validation, error handling, and structured logging. The calculate_* functions (e.g., calculate_volatility) are backward-compatibility aliases and not the main API. See docs/src/feature_generator.py.md for full API and usage details. Regularly audit this description against the module and design.md to ensure accuracy.
     - `config_parser.py` — Utility for loading and validating YAML configuration files.
     - `strategies.py` — Module for implementing trading strategies, including a BaseStrategy class and the generate_sma_crossover_signals function.
+    - `backtester.py` — Provides the simulation framework for backtesting trading strategies based on generated signals. The primary interface is `run_backtest`, which accepts a DataFrame with signals and prices, an initial capital amount, and returns a trade log and portfolio value series. Only the function skeleton and input validation are implemented as of 2025-05-23. See docs/src/backtester.py.md for API and usage details.
 - `configs/` — Configuration files for strategies, data sources, environment settings, and logging.
     - `logging_config.py` — Centralized logging configuration. Should be imported and called from the main application entry point.
     - `README.md` — Placeholder and documentation for configuration conventions.
@@ -28,6 +29,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
         - `data_loader.py.md` — Documentation for src/data_loader.py.
         - `feature_generator.py.md` — Documentation for src/feature_generator.py.
         - `strategies.py.md` — Documentation for src/strategies.py.
+        - `backtester.py.md` — Documentation for src/backtester.py.
 
 ## File Descriptions
 
@@ -35,6 +37,7 @@ This document describes the directory structure for the Simple Stock Strategy Ba
 - **src/feature_generator.py**: Provides feature engineering utilities for stock trading strategies. The primary interface consists of add_sma, add_price_change_pct_1d, add_volatility_nday, and the generate_features orchestrator, all of which add features directly to DataFrames with robust input validation, error handling, and structured logging. The calculate_* functions (e.g., calculate_volatility) are backward-compatibility aliases and not the main API. See docs/src/feature_generator.py.md for full API and usage details. Regularly audit this description against the module and design.md to ensure accuracy.
 - **src/config_parser.py**: Utility for loading and validating YAML configuration files. See docs/src/config_parser.py.md for API and usage details.
 - **src/strategies.py**: Module for implementing trading strategies. Includes a `BaseStrategy` class, the `generate_sma_crossover_signals` function for generating signals based on SMA crossovers, and the `apply_strategy` function for applying different strategies to data. See docs/src/strategies.py.md for API and usage details.
+- **src/backtester.py**: Provides the simulation framework for backtesting trading strategies based on generated signals. The primary interface is `run_backtest`, which accepts a DataFrame with signals and prices, an initial capital amount, and returns a trade log and portfolio value series. Only the function skeleton and input validation are implemented as of 2025-05-23. See docs/src/backtester.py.md for API and usage details.
 
 ## Notes
 - Each directory contains a placeholder file to ensure it is tracked in version control.
