@@ -94,8 +94,8 @@ The application will consist of the following Python modules:
     *   Validate the basic structure and presence of required parameters (e.g., `strategy_name`, `parameters`, specific window sizes).
     *   Return a structured representation of the configuration (e.g., a dictionary).
 *   **Interfaces:**
-    *   `load_config(config_path: str) -> dict:`
-        *   Input: Path to the YAML configuration file.
+    *   `load_config(filepath: str, validate_schema: bool = True) -> dict:`
+        *   Input: Path to the YAML configuration file, optional schema validation flag.
         *   Output: A dictionary representing the parsed configuration.
         *   Raises: `FileNotFoundError` if config file not found, `ValueError` or custom exception for invalid config format/content.
 *   **Key Data Structures:** Python dictionary representing the YAML content.

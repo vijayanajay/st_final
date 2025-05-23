@@ -6,10 +6,11 @@ The `config_parser.py` module is responsible for loading and validating YAML con
 
 ## Key Function
 
-### `load_config(path: str) -> dict`
+### `load_config(filepath: str, validate_schema: bool = True) -> dict`
 
 **Parameters:**
-- `path` (str): Path to the YAML config file.
+- `filepath` (str): Path to the YAML config file.
+- `validate_schema` (bool, optional): Whether to validate the config schema. Defaults to True. When False, only loads and returns the config without validation.
 
 **Returns:**
 - `dict`: Parsed configuration.
@@ -26,10 +27,12 @@ The `config_parser.py` module is responsible for loading and validating YAML con
 ## Function Details: load_config
 
 ```python
-def load_config(path: str) -> dict
+def load_config(filepath: str, validate_schema: bool = True) -> dict
 ```
 - Loads and validates YAML configuration files for trading strategies.
 - Supports two configuration formats:
+- When `validate_schema` is True (default), performs strict schema validation and ensures all required fields are present.
+- When `validate_schema` is False, only loads the YAML file and returns its contents without validation, useful for testing or when validation is handled elsewhere.
 
 ### Legacy Format
 ```yaml
@@ -54,6 +57,10 @@ from src import config_parser
 try:
     config = config_parser.load_config('configs/strategies/sma_cross.yaml')
     print(config)
+    
+    # Load without schema validation
+    config_unvalidated = config_parser.load_config('configs/strategies/sma_cross.yaml', validate_schema=False)
+    print(config_unvalidated)
 except (FileNotFoundError, ValueError) as e:
     print(f"Error: {e}")
 ```

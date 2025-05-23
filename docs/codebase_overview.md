@@ -141,8 +141,9 @@ print(features_df3.columns.tolist())  # ['close', 'sma_3']
 Loads and validates YAML configuration files for trading strategies. Ensures all required fields are present and the configuration is properly formatted.
 
 **Key Function:**
-- `load_config(path: str) -> dict`
-    - **path**: Path to the YAML config file.
+- `load_config(filepath: str, validate_schema: bool = True) -> dict`
+    - **filepath**: Path to the YAML config file.
+    - **validate_schema**: Optional boolean (default True) to control schema validation. When False, only loads the YAML without validation.
     - **Returns**: Dict containing the parsed configuration.
     - **Raises**: FileNotFoundError if the file does not exist, ValueError if YAML is invalid or required fields are missing.
     - **Logging**: Logs errors for missing files, invalid YAML, and missing required fields. All log messages use standard error types for testability and observability.
@@ -154,6 +155,9 @@ from src import config_parser
 try:
     config = config_parser.load_config('configs/strategies/sma_cross.yaml')
     print(config)
+    
+    # Load without schema validation if needed
+    config_unvalidated = config_parser.load_config('configs/strategies/sma_cross.yaml', validate_schema=False)
 except (FileNotFoundError, ValueError) as e:
     print(f"Error: {e}")
 ```
