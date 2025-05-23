@@ -413,3 +413,16 @@ The application will consist of the following Python modules:
     *   Performance is dependent on pandas; very long histories or extremely numerous features might slow down on low-spec machines (but generally fine for daily data).
     *   Error handling is basic; focuses on clear messages rather than complex recovery.
 
+### 11. Important Implementation Notes and Errata
+
+**IMPORTANT NOTICE: Implementation Discrepancy (DOC-002)**
+
+The implementation of some components in this design has evolved beyond their initial specification in this document. In particular, the `feature_generator.py` module's `generate_features` function implementation provides a more flexible feature configuration structure than initially described in Section 4.4.
+
+**For accurate and current information, please consult:**
+- [Design Errata and Implementation Notes](design_errata.md) - Contains details on implementation evolution
+- [Feature Generator Documentation](src/feature_generator.py.md) - Contains comprehensive API reference
+- [Codebase Overview](codebase_overview.md) - Contains up-to-date usage examples
+
+The original design document is maintained as a historical reference, but the implementation and associated documentation (noted above) should be considered the source of truth.
+

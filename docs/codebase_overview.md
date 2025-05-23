@@ -71,6 +71,7 @@ Provides feature engineering utilities for stock trading strategies. The module'
 **Primary Interface Functions:**
 - `add_sma(df: pd.DataFrame, column: str, window: int) -> pd.Series`
     - Adds a Simple Moving Average (SMA) column to the DataFrame for the specified column and window.
+    - Validates that the column is numeric, raising a ValueError with a clear message if not.
 - `add_price_change_pct_1d(df: pd.DataFrame, column: str = "close") -> pd.Series`
     - Adds a 1-day price change percentage column to the DataFrame.
 - `add_volatility_nday(df: pd.DataFrame, column: str = "close", window: int = 20) -> pd.Series`

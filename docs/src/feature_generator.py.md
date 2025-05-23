@@ -36,7 +36,7 @@ Adds Simple Moving Average (SMA) to the DataFrame.
 - `pd.Series`: Series containing the SMA values, named as 'sma_{window}'.
 
 **Raises:**
-- `ValueError`: If the column does not exist or window is invalid.
+- `ValueError`: If the column does not exist, is not numeric, or window is invalid.
 
 **Notes:**
 - Input validation and error handling are performed, with structured logging for all error conditions and critical operations (see code for logging details).

@@ -173,3 +173,25 @@
 **Last Resolution Summary (Concise):** Removed all redundant tests for the `fetch` function while keeping the comprehensive test suite for the primary `fetch_data` function. Retained only the single test that verifies the `fetch` function correctly delegates to `fetch_data`. This significantly reduced code duplication while maintaining full functional coverage of the API.
 **Date Last Resolved:** 2025-05-24
 ---
+
+---
+**Issue ID:** TEST-007
+**Original Description (Concise):** Test Logic Flaw (Incorrect Expected Value) in `tests/test_feature_generator.py`. The expected value for `add_volatility_nday` with window=3 at index 3 (5.924143874124078) was claimed to be incorrect, with 5.821536039701941 suggested as the correct value.
+**Initial Resolution Summary (Concise):** As of 2025-05-24, verified through multiple calculation methods that the original expected value 5.924143874124078 was actually correct. The issue was a false positive.
+**Date First Resolved:** 2025-05-24
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Verified that the original test code was correct. The expected value of 5.924143874124078 was validated using both pandas' rolling standard deviation and manual calculation. The suggested "correct" value of 5.821536039701941 was found to be erroneous. No changes were required to the test or implementation code, as both were already functioning correctly with proper validation.
+**Date Last Resolved:** 2025-05-24
+---
+
+---
+**Issue ID:** INPUT-001
+**Original Description (Concise):** Missing Input Validation in `src/feature_generator.py`. The `add_sma` function did not explicitly check if the input column is numeric before attempting the .rolling().mean() operation, inconsistent with other similar functions in the same module.
+**Initial Resolution Summary (Concise):** As of 2025-05-24, added explicit validation using `pd.api.types.is_numeric_dtype(df[column])` to the `add_sma` function, with appropriate error logging and raising a clear ValueError, consistent with other functions in the module.
+**Date First Resolved:** 2025-05-24
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Added missing numeric column validation to the `add_sma` function, updated tests to include this validation check, and ensured documentation consistency. This provides clearer error messages and matches the pattern established in other feature generation functions.
+**Date Last Resolved:** 2025-05-24
+---

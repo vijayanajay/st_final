@@ -46,6 +46,19 @@ _None at this time._
 - Progress summaries accurately reflect completion counts
 - All completed tasks have corresponding implementation and test evidence
 
+**DOC-002:** Documentation Mismatch between Design and Implementation in feature_generator.py. The `docs/design.md` (Section 4.4) describes `generate_features`'s `feature_config` parameter in a way that implies it's primarily derived from strategy parameters. The actual implementation and other documentation (docs/src/feature_generator.py.md, docs/codebase_overview.md) show a more evolved and flexible feature_config structure that supports three different formats.
+
+**Flaw Impact:** High - Developers referencing docs/design.md for `generate_features` will have an incomplete or misleading understanding of how to configure features, potentially leading to incorrect usage or confusion.
+
+**Root Cause:** The design.md was not updated when the `generate_features` function's feature_config parameter handling was enhanced and finalized during implementation.
+
+**Mandated Solution:** 
+1. ✅ **RESOLVED** - Added a prominent note section at the end of docs/design.md that points to docs/src/feature_generator.py.md and docs/codebase_overview.md for the accurate specification
+2. ✅ **RESOLVED** - Created a detailed docs/design_errata.md file that explains the discrepancy and documents the three supported feature_config structures accurately
+3. ✅ **RESOLVED** - Linked to the errata file from docs/design.md with a clear explanation of the implementation evolution
+
+**Systemic Prevention:** For future projects or major versions, establish a process where design documents are either living documents updated with implementation, or are clearly marked as "initial design" with pointers to detailed implementation docs for evolved components. If a design doc is to remain static, its limitations/deviations from the final implementation must be clearly signposted within the design document itself.
+
 ---
 
 ## RESOLVED CRITICAL FLAWS (This Audit)
@@ -54,9 +67,13 @@ _None at this time._
 
 **DOC-001 (RESOLVED):** Documentation Veracity Failure in `docs/tasks.md`. Tasks 20, 21, and 22 were incorrectly marked as incomplete despite full implementation. ✅ **RESOLVED** - Task statuses updated, progress summary corrected, systemic prevention measures mandated.
 
+**DOC-002 (RESOLVED):** Documentation Mismatch in feature_generator.py. The design.md description of `generate_features` didn't match the actual evolved implementation. ✅ **RESOLVED** - Added errata section to design.md and created comprehensive design_errata.md to document the actual supported feature_config structures.
+
 **CODE-001 (RESOLVED):** Code Duplication in `src/backtester.py`. The `PortfolioData` NamedTuple was defined twice, identically, within the file. ✅ **RESOLVED** - Removed the duplicate definition while maintaining all functionality and test coverage.
 
 **API-001 (RESOLVED):** Architectural Degeneration in Test Suite. The test suite for feature generator primarily targeted legacy alias functions (calculate_*) instead of designated primary API functions (add_*). ✅ **RESOLVED** - The tests have been refactored to directly call the primary add_* functions, with separate minimal tests for legacy function delegation.
+
+**INPUT-001 (RESOLVED):** Missing Input Validation in `src/feature_generator.py`. The `add_sma` function lacked validation to ensure the input column is numeric, inconsistent with other similar functions in the same module. ✅ **RESOLVED** - Added explicit numeric type check using `pd.api.types.is_numeric_dtype`, with appropriate error messages and tests.
 
 ---
 
@@ -68,6 +85,7 @@ _None at this time._
 - Tests for feature generation have been refactored to use static, pre-calculated expected values rather than dynamic recalculation, ensuring independent verification of function correctness.
 - Tests for feature generation have been further refactored to directly target the primary API functions (add_*) instead of legacy aliases (calculate_*).
 - The design documentation for the `generate_features` function in `feature_generator.py` has been updated to match the implemented behavior. The function uses a `feature_config` dictionary approach rather than the originally designed `strategy_params` approach, providing better separation of concerns and more flexibility in feature generation.
+- The discrepancy between design.md and the actual implementation of feature_generator.py has been addressed through a design_errata.md file and a prominent note in design.md, pointing users to accurate documentation while preserving the original design document.
 - The data loading interface has been consolidated by enhancing the `fetch_data` function with the additional capabilities from the `fetch` function (column selection and cache control). The `fetch` function is now a backward-compatibility wrapper around `fetch_data`. All relevant documentation has been updated to reflect this change.
 - Test imports in `test_backtester.py` have been standardized to use proper Python module imports rather than dynamic imports, improving code clarity and maintainability.
 - Test assertions in `test_backtester.py` have been made more precise, ensuring they match the exact expected behavior of the backtesting logic. In particular, portfolio composition tracking assertions now verify exact values (0% cash/100% equity when in position) rather than using less precise comparisons.

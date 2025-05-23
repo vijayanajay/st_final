@@ -41,6 +41,7 @@ def test_window_larger_than_data(sample_df, func, kwargs):
 
 
 @pytest.mark.parametrize("func,df,kwargs", [
+    (add_sma, pd.DataFrame({'close': ['a', 'b', 'c']}), dict(column='close', window=2)),
     (add_price_change_pct_1d, pd.DataFrame({'close': ['a', 'b', 'c']}), dict(column='close')),
     (add_volatility_nday, pd.DataFrame({'close': ['a', 'b', 'c']}), dict(column='close', window=2)),
 ])
@@ -61,6 +62,11 @@ def test_sma_logging(sample_df, caplog):
         with pytest.raises(ValueError):
             add_sma(sample_df, column='close', window=0)
         assert any("Window size must be a positive integer" in record.getMessage() for record in caplog.records)
+    with caplog.at_level('ERROR'):
+        df_non_numeric = pd.DataFrame({'close': ['a', 'b', 'c']})
+        with pytest.raises(ValueError):
+            add_sma(df_non_numeric, column='close', window=2)
+        assert any("must be numeric for SMA calculation" in record.getMessage() for record in caplog.records)
 
 def test_price_change_pct_logging(caplog):
     df = pd.DataFrame({'close': [10, 12, 15]})
