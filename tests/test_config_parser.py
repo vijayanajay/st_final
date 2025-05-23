@@ -6,12 +6,6 @@ from src import config_parser
 
 import tempfile
 
-import sys
-
-import types
-
-import importlib
-
 def make_legacy_config():
     return {'strategy': 'sma_cross', 'fast_window': 10, 'slow_window': 50}
 

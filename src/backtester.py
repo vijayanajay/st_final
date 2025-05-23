@@ -36,6 +36,6 @@ def run_backtest(
         raise ValueError(f"Signal column '{signal_col}' not found in DataFrame.")
     if price_col not in df_with_signals.columns:
         raise ValueError(f"Price column '{price_col}' not found in DataFrame.")
-    logger.info(f"[backtester] run_backtest called with initial_capital={initial_capital}")
+    logger.info(f"run_backtest called with initial_capital={initial_capital}")
     # Skeleton: return empty trade log and empty portfolio series
     return [], pd.Series(dtype=float)

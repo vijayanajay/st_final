@@ -1,14 +1,6 @@
-import sys
-import os
-import importlib.util
 import pytest
 import pandas as pd
-
-# Dynamically import backtester.py from src/
-backtester_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'backtester.py'))
-spec = importlib.util.spec_from_file_location('backtester', backtester_path)
-backtester = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(backtester)
+from src import backtester
 
 
 def test_run_backtest_exists():

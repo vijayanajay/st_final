@@ -24,6 +24,8 @@ def run_backtest(
     - `portfolio_values`: Series of portfolio values (empty for skeleton).
 - **Raises:**
     - `ValueError`: If required columns are missing.
+- **Logging:**
+    - Logs when run_backtest is called, using the logger name (from `logging.getLogger(__name__)`) as configured. No manual '[backtester]' prefix is included in the message body; contextual information is provided by the logging framework.
 
 ## Current Status
 - Only the function skeleton and input validation are implemented. No actual simulation logic yet.

@@ -11,6 +11,8 @@
 *   **Pragmatism:** Use the right tools for the job, but don't get bogged down in tool selection.
 *   **No Magic:** Clear, understandable code and processes.
 
+**Implementation Evolution Note:** This PRD captures the initial product requirements and design concepts. During implementation, certain architectural decisions evolved to better serve the core requirements while maintaining the guiding principles. Specific evolution notes are included in relevant sections below, with detailed documentation available in the corresponding `docs/src/` files.
+
 ### 1. Introduction
 S3B is a lightweight Python tool designed to fetch historical stock data, generate basic financial features, and backtest a simple trading strategy defined in a configuration file. The initial focus is on Indian stocks, starting with Reliance Industries (RELIANCE.NS), using daily (or longer) data. The tool prioritizes extreme simplicity in implementation and user interaction.
 
@@ -58,6 +60,8 @@ Then, the user simply executes `python main.py`.
     *   `Volatility_Nday`: Rolling standard deviation of `Price_Change_Pct_1d` over N days (e.g., N=20, configurable or fixed for now).
     *   *Future (optional, if trivial):* Day of week, month.
 
+*   **Implementation Evolution Note:** The final implementation evolved to use a dedicated `feature_config` structure (as detailed in `docs/src/feature_generator.py.md`) rather than directly linking feature parameters to strategy configurations. This approach provides greater flexibility and separation of concerns, allowing features to be generated independently of specific strategy requirements while maintaining the core requirement of configurable feature generation.
+
 **5.3. Strategy Configuration (File: e.g., `configs/sma_cross.yaml`)**
 *   **Format:** Simple YAML or INI file. YAML is preferred for readability.
 *   **Content:**
@@ -76,6 +80,8 @@ Then, the user simply executes `python main.py`.
         *   Assume trades execute at the `Close` price of the day the signal is generated.
         *   Hold one position at a time (long only). If a buy signal occurs while holding, do nothing. If a sell signal occurs while not holding, do nothing.
 *   This module will contain a function for each strategy (e.g., `execute_sma_crossover(data_with_features, params)`).
+
+*   **Implementation Evolution Note:** The final implementation evolved to use a class-based Strategy Pattern (as detailed in `docs/src/strategies.py.md`) with abstract base classes, concrete strategy implementations, and a registry system. This approach provides better modularity, extensibility, and maintainability compared to the initial function-based concept while fulfilling the core requirement of configurable strategy execution.
 
 **5.5. Backtester (Module: `backtester.py`)**
 *   **Input:** Pandas DataFrame with features and signals.

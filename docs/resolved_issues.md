@@ -51,6 +51,22 @@
 **Date First Resolved:** 2025-05-23
 **Reopen Count:** 0
 **Last Reopened Date:**
+**Last Resolution Summary (Concise):** Updated `docs/design.md` to reflect the actual implemented behavior of `generate_features` which uses a more flexible feature_config approach instead of the originally designed strategy_params approach. The implemented approach provides better separation of concerns and more flexibility in feature generation.
+**Date Last Resolved:** 2025-05-23
+---
+
+---
+**Issue ID:** IMPORT-001
+**Original Description (Concise):** Non-Standard Import Practices in `tests/test_backtester.py`. The test file used dynamic imports (importlib.util.spec_from_file_location) to load the backtester.py module from the src/ directory, making the test setup less standard and potentially more brittle.
+**Initial Resolution Summary (Concise):** As of 2025-05-23, updated `tests/test_backtester.py` to use standard import statements (from src import backtester) consistent with the project's structure and Python import conventions.
+**Date First Resolved:** 2025-05-23
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Modified `tests/test_backtester.py` to use standard import statements (from src import backtester) instead of dynamic imports with importlib. This change makes the test setup more standard and consistent with other test files in the project. Verified that tests still pass after the change.
+**Date Last Resolved:** 2025-05-23
+---
+**Reopen Count:** 0
+**Last Reopened Date:**
 **Last Resolution Summary (Concise):** Updated `docs/design.md` to accurately reflect the implementation of `generate_features`. This ensures consistency between documentation and code, reducing confusion for developers. The implemented approach (feature_config) was determined to be superior to the originally designed approach (strategy_params) due to its flexibility and extensibility. Updated `docs/design.md` Section 4.4 to match the implemented behavior in `src/feature_generator.py`. The implemented feature_config approach was determined to be superior to the originally designed strategy_params approach as it provides better separation of concerns and more flexibility in feature generation. The documentation now correctly describes the function signature as `generate_features(df: pd.DataFrame, feature_config: dict) -> pd.DataFrame` and explains how the feature_config dictionary is used to generate features.
 **Date Last Resolved:** 2025-05-23
 ---
@@ -85,5 +101,16 @@
 **Reopen Count:** 0
 **Last Reopened Date:**
 **Last Resolution Summary (Concise):** Implemented column name conflict resolution in the `_add_feature` function. When a generated feature's column name already exists in the DataFrame, the function now automatically renames the new column by appending a numerical suffix (e.g., `sma_3_1`, `sma_3_2`) to avoid overwriting existing data. Added appropriate logging for column conflicts. Fixed a test function that was missing the `caplog` parameter and updated documentation in `docs/src/feature_generator.py.md` to describe the conflict resolution behavior.
+**Date Last Resolved:** 2025-05-23
+---
+
+---
+**Issue ID:** ARCH-001
+**Original Description (Concise):** Architectural Inconsistency in Strategy Implementation. The `apply_strategy` function used a hardcoded if/else structure to handle different strategy types, which did not leverage the existing `BaseStrategy` class intended for a Strategy pattern implementation.
+**Initial Resolution Summary (Concise):** As of 2025-05-23, the Strategy pattern has been properly implemented: a clear interface in `BaseStrategy` with abstract methods, concrete strategy implementations (e.g., `SMACrossoverStrategy`), a strategy registry for dynamic instantiation, and refactored `apply_strategy` to use this pattern. The `generate_sma_crossover_signals` function has been maintained for backward compatibility but now uses the new `SMACrossoverStrategy` internally.
+**Date First Resolved:** 2025-05-23
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Implemented a proper Strategy pattern in the strategies module, allowing for extensible strategy implementations without modifying the `apply_strategy` function. All existing tests continue to pass, and new tests have been added to verify the Strategy pattern implementation.
 **Date Last Resolved:** 2025-05-23
 ---

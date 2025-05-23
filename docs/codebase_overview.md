@@ -87,18 +87,48 @@ from src.feature_generator import add_sma, add_price_change_pct_1d, add_volatili
 import pandas as pd
 
 df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
+
+# Individual feature functions
 sma = add_sma(df, column='close', window=3)
 pct = add_price_change_pct_1d(df, column='close')
 vol = add_volatility_nday(df, column='close', window=3)
-features_df = generate_features(df, {'sma': {'column': 'close', 'window': 3}})
+
+# generate_features supports multiple configuration formats:
+
+# 1. Named feature instances with "type" field (enables multiple features of same type)
+config_named = {
+    "SMA_short": {"type": "sma", "column": "close", "window": 5},
+    "SMA_long": {"type": "sma", "column": "close", "window": 20},
+    "Custom_Vol": {"type": "volatility_nday", "column": "close", "window": 10}
+}
+features_df1 = generate_features(df, config_named)
+
+# 2. List-based configurations (predefined keys: "smas", "price_changes", "volatility_metrics")
+config_lists = {
+    "smas": [
+        {"name": "SMA_10", "column": "close", "window": 10},
+        {"name": "SMA_30", "column": "close", "window": 30}
+    ],
+    "volatility_metrics": [
+        {"name": "Vol_5", "column": "close", "window": 5}
+    ]
+}
+features_df2 = generate_features(df, config_lists)
+
+# 3. Legacy format (backward compatibility)
+config_legacy = {'sma': {'column': 'close', 'window': 3}}
+features_df3 = generate_features(df, config_legacy)
+
 print(sma)
 print(pct)
 print(vol)
-print(features_df)
+print(features_df1.columns.tolist())  # ['close', 'SMA_short', 'SMA_long', 'Custom_Vol']
+print(features_df2.columns.tolist())  # ['close', 'SMA_10', 'SMA_30', 'Vol_5']
+print(features_df3.columns.tolist())  # ['close', 'sma_3']
 ```
 
 **Testing:**
-- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for all primary interface functions and aliases.
+- Unit tests in `tests/test_feature_generator.py` cover correctness, edge cases, and compliance with the logging standard for all primary interface functions and aliases. As of 2025-05-23, redundant log assertion tests have been consolidated: all log message checks for error and info conditions are now performed in the main test_X_logging functions for each feature, reducing maintenance overhead and improving clarity.
 
 **Documentation Policy Note:**
 - All changes to module APIs (function additions, renames, deprecations) must trigger an immediate review and update of `docs/codebase_overview.md`, `docs/file_structure.md`, and the relevant `docs/src/[module].py.md`. This is a mandatory part of the Definition of Done for any API-altering task.
@@ -137,19 +167,28 @@ except (FileNotFoundError, ValueError) as e:
 **Location:** src/strategies.py
 
 **Purpose:**
-This module contains the logic for different trading strategies. It defines a BaseStrategy class and implements the generate_sma_crossover_signals function for SMA crossover strategies.
+This module contains the logic for different trading strategies. It implements the Strategy Pattern with a BaseStrategy abstract base class that concrete strategy classes inherit from.
 
 **Key Classes:**
 - `BaseStrategy`
-    - **Purpose:** Serves as a foundational class for all strategy implementations.
-    - **Attributes:** (To be defined)
-    - **Methods:** (To be defined)
+    - **Purpose:** Abstract base class for all strategy implementations.
+    - **Abstract Methods:**
+        - `generate_signals(df: pd.DataFrame, params: Dict[str, Any]) -> pd.Series`: Generates trading signals for a given DataFrame and parameters.
+        - `get_required_parameters() -> List[str]`: Returns the list of required parameters for the strategy.
+    - **Concrete Methods:**
+        - `validate_parameters(params: Dict[str, Any]) -> None`: Validates that all required parameters are present.
+
+- `SMACrossoverStrategy`
+    - **Purpose:** Implements the SMA crossover strategy (inherits from BaseStrategy).
+    - **Required Parameters:** 'fast_sma' and 'slow_sma'.
+    - **Signal Logic:** BUY when short SMA crosses above long SMA, SELL when short SMA crosses below long SMA.
 
 **Key Functions:**
 - `generate_sma_crossover_signals(df_with_features: pd.DataFrame, short_window_col: str = "SMA_short", long_window_col: str = "SMA_long") -> pd.Series`
-    - **Purpose:** Generates trading signals based on SMA crossovers.
+    - **Purpose:** Generates trading signals based on SMA crossovers (kept for backward compatibility).
     - **Returns:** Series with trading signals (1 for buy, -1 for sell, 0 for hold).
     - **Raises:** ValueError if required columns are missing.
+    - **Note:** Internally uses the SMACrossoverStrategy class.
 
 - `apply_strategy(df: pd.DataFrame, strategy_params: dict) -> pd.DataFrame`
     - **Purpose:** Applies a trading strategy to a DataFrame and generates buy/sell signals.
@@ -158,7 +197,9 @@ This module contains the logic for different trading strategies. It defines a Ba
         - `strategy_params`: Dictionary containing strategy type and parameters.
     - **Returns:** DataFrame with added 'signal' column (1 for buy, -1 for sell, 0 for hold).
     - **Raises:** ValueError if strategy type is not supported or required parameters are missing.
-    - **Supported Strategy Types:** 'sma_crossover' (requires 'fast_sma' and 'slow_sma' parameters)
+    - **Supported Strategy Types:** 
+        - 'sma_crossover' (requires 'fast_sma' and 'slow_sma' parameters)
+    - **Design Pattern:** Uses the Strategy Pattern to dynamically instantiate and use strategy objects based on strategy_type.
 
 **Example Usage:**
 ```python

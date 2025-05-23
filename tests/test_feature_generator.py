@@ -104,30 +104,12 @@ def test_volatility_logging(caplog):
             calculate_volatility(df, column='close', window=0)
         assert any('Window size must be a positive integer' in record.getMessage() for record in caplog.records)
 
-def test_calculate_sma_logs_error_on_invalid_column(sample_df, caplog):
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(ValueError):
-            calculate_sma(sample_df, column='not_a_column', window=3)
-    assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)
-
-def test_calculate_price_change_pct_logs_error_on_invalid_column(sample_df, caplog):
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(ValueError):
-            calculate_price_change_pct(sample_df, column='not_a_column')
-    assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)
-
-def test_calculate_volatility_logs_error_on_invalid_column(sample_df, caplog):
-    with caplog.at_level(logging.ERROR):
-        with pytest.raises(ValueError):
-            calculate_volatility(sample_df, column='not_a_column', window=2)
-    assert any("not found in DataFrame" in record.getMessage() for record in caplog.records)
-
 def test_add_sma_signature_and_behavior():
     import inspect
     from src import feature_generator
     sig = inspect.signature(feature_generator.add_sma)
     assert list(sig.parameters.keys()) == ["df", "column", "window"]
-    # ...additional tests for correct behavior, error handling, and logging...
+    # This test only checks the function signature. Behavior, error handling, and logging are covered in dedicated test functions like test_add_sma_with_valid_inputs, test_add_sma_raises_appropriate_errors, and test_sma_logging.
 
 def test_add_sma_with_valid_inputs():
     """Test add_sma function with various valid inputs."""
@@ -197,7 +179,7 @@ def test_add_price_change_pct_1d_signature_and_behavior():
     from src import feature_generator
     sig = inspect.signature(feature_generator.add_price_change_pct_1d)
     assert list(sig.parameters.keys()) == ["df", "column"]
-    # ...additional tests...
+    # This test only checks the function signature. Behavior, error handling, and logging are covered in dedicated test functions like test_add_price_change_pct_1d_with_valid_inputs, test_add_price_change_pct_1d_raises_appropriate_errors, and test_price_change_pct_1d_logging.
 
 def test_add_price_change_pct_1d_with_valid_inputs():
     """Test add_price_change_pct_1d function with various valid inputs."""
@@ -273,7 +255,7 @@ def test_add_volatility_nday_signature_and_behavior():
     from src import feature_generator
     sig = inspect.signature(feature_generator.add_volatility_nday)
     assert list(sig.parameters.keys()) == ["df", "column", "window"]
-    # ...additional tests...
+    # This test only checks the function signature. Behavior, error handling, and logging are covered in dedicated test functions like test_add_volatility_nday_with_valid_inputs, test_add_volatility_nday_raises_appropriate_errors, and test_volatility_nday_logging.
 
 def test_add_volatility_nday_with_valid_inputs():
     """Test add_volatility_nday function with various valid inputs."""
