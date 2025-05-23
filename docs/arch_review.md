@@ -21,6 +21,8 @@ _None at this time._
 
 **API-001 (RESOLVED):** Dual Interfaces and Documentation Mismatch in `data_loader.py`. Two similar public functions (`fetch_data` and `fetch`) existed with disparate feature sets, potentially causing API confusion for developers. The officially designed `fetch_data` function in `docs/design.md` lacked the enhanced capabilities of the `fetch` function. This issue has been RESOLVED by enhancing `fetch_data` to include all capabilities of `fetch` (column selection, cache control), making `fetch` a thin wrapper around `fetch_data` for backward compatibility, and updating all relevant documentation.
 
+**ERR-001 (RESOLVED):** Column Name Conflict Handling in `feature_generator.py`. The `_add_feature` function did not properly handle column name conflicts when joining features to the DataFrame, which could result in silent overwriting of existing columns. This issue has been RESOLVED by implementing proper column conflict resolution that renames columns with sequential suffixes when conflicts occur, with appropriate logging of these actions.
+
 ---
 
 ## RESOLVED CRITICAL FLAWS (This Audit)

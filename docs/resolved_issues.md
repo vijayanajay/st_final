@@ -65,3 +65,25 @@
 **Last Resolution Summary (Concise):** Refactored all tests in `test_feature_generator.py` to use static, pre-calculated expected values. Updated documentation in `docs/src/feature_generator.py.md` to emphasize the correct testing approach. Added a new documentation file `docs/tests/test_feature_generator.py.md` to explain the testing principles and practices.
 **Date Last Resolved:** 2025-05-23
 ---
+
+---
+**Issue ID:** API-001
+**Original Description (Concise):** Dual Interfaces and Documentation Mismatch in `data_loader.py`. Two similar public functions (`fetch_data` and `fetch`) existed with disparate feature sets, potentially causing API confusion for developers.
+**Initial Resolution Summary (Concise):** As of 2025-05-23, enhanced `fetch_data` to include all capabilities of `fetch` (column selection, cache control), made `fetch` a thin wrapper around `fetch_data` for backward compatibility, and updated all relevant documentation.
+**Date First Resolved:** 2025-05-23
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Enhanced `fetch_data` to include all capabilities of `fetch` (column selection, cache control). Made `fetch` a thin wrapper around `fetch_data` for backward compatibility. Updated all relevant documentation in `docs/src/data_loader.py.md` and `docs/design.md` to reflect the consolidated API.
+**Date Last Resolved:** 2025-05-23
+---
+
+---
+**Issue ID:** ERR-001
+**Original Description (Concise):** Column Name Conflict Handling in `feature_generator.py`. The `_add_feature` function did not properly handle column name conflicts when joining features to the DataFrame, which could result in silent overwriting of existing columns.
+**Initial Resolution Summary (Concise):** As of 2025-05-23, implemented proper column conflict resolution that renames columns with sequential suffixes when conflicts occur, with appropriate logging of these actions.
+**Date First Resolved:** 2025-05-23
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Implemented column name conflict resolution in the `_add_feature` function. When a generated feature's column name already exists in the DataFrame, the function now automatically renames the new column by appending a numerical suffix (e.g., `sma_3_1`, `sma_3_2`) to avoid overwriting existing data. Added appropriate logging for column conflicts. Fixed a test function that was missing the `caplog` parameter and updated documentation in `docs/src/feature_generator.py.md` to describe the conflict resolution behavior.
+**Date Last Resolved:** 2025-05-23
+---

@@ -188,11 +188,43 @@ def generate_features(df: pd.DataFrame, feature_config: dict) -> pd.DataFrame:
 ```
 
 **Description:**
-Orchestrates feature generation as specified in feature_config.
+Orchestrates feature generation as specified in feature_config. This function supports multiple configurations for the same feature type (e.g., multiple SMAs with different window sizes).
 
 **Parameters:**
 - `df` (pd.DataFrame): Input DataFrame containing price data.
-- `feature_config` (dict): Configuration dictionary specifying features to generate.
+- `feature_config` (dict): Configuration dictionary specifying features to generate. The configuration can be structured in three ways:
+
+  1. Named feature instances with a 'type' field:
+     ```python
+     {
+         "SMA_short": {"type": "sma", "column": "close", "window": 20},
+         "SMA_long": {"type": "sma", "column": "close", "window": 50},
+         "Custom_Volatility": {"type": "volatility_nday", "column": "close", "window": 30}
+     }
+     ```
+
+  2. Predefined list keys for multiple configurations of the same feature type:
+     ```python
+     {
+         "smas": [
+             {"name": "SMA_short", "column": "close", "window": 20},
+             {"name": "SMA_long", "column": "close", "window": 50}
+         ],
+         "volatility_metrics": [
+             {"name": "volatility_20", "column": "close", "window": 20}
+         ]
+     }
+     ```
+     Valid list keys are: `"smas"`, `"price_changes"`, `"volatility_metrics"`
+
+  3. Legacy format (for backward compatibility):
+     ```python
+     {
+         "sma": {"column": "close", "window": 20},
+         "price_change_pct_1d": {"column": "close"},
+         "volatility_nday": {"column": "close", "window": 20}
+     }
+     ```
 
 **Returns:**
 - `pd.DataFrame`: DataFrame with added feature columns as specified in feature_config.
@@ -201,7 +233,13 @@ Orchestrates feature generation as specified in feature_config.
 - `ValueError`: If any specified feature in feature_config is invalid.
 
 **Notes:**
-- The function validates the feature_config against the available feature generation functions and their parameters.
+- The function supports multiple instances of the same feature type (e.g., multiple SMAs with different window sizes).
+- For the list-based configuration (format 2), each item must include a 'name' field to specify the output column name.
+- For the named instance configuration (format 1), the key is used as the output column name.
+- For the legacy format (format 3), the output column name is determined by the underlying feature function.
+- The function recognizes specific list keys (`"smas"`, `"price_changes"`, `"volatility_metrics"`) for list-based configurations.
+- List keys not in the predefined set will be ignored with a warning.
+- **Column name conflict resolution**: If a generated feature's column name already exists in the DataFrame, the function will automatically rename the new column by appending a numerical suffix (e.g., `sma_3_1`, `sma_3_2`) to avoid overwriting existing data. This ensures that no data is lost during feature generation and multiple instances of similar features can coexist.
 - Logging is handled using the standard library `logging` module, with configuration centralized in `configs/logging_config.py`.
 - The function is tested in `tests/test_feature_generator.py`.
 
@@ -215,7 +253,55 @@ import pandas as pd
 from src.feature_generator import generate_features
 
 df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
-feature_config = {'sma': {'column': 'close', 'window': 3}}
+
+# Format 1: Named instances with type
+feature_config = {
+    "SMA_short": {"type": "sma", "column": "close", "window": 20},
+    "SMA_long": {"type": "sma", "column": "close", "window": 50}
+}
+features_df = generate_features(df, feature_config)
+print(features_df)
+
+# Format 2: Using predefined list keys
+feature_config = {
+    "smas": [
+        {"name": "SMA_short", "column": "close", "window": 20},
+        {"name": "SMA_long", "column": "close", "window": 50}
+    ]
+}
+features_df = generate_features(df, feature_config)
+print(features_df)
+
+# Format 3: Legacy format
+feature_config = {'sma': {'column': 'close', 'window': 20}}
 features_df = generate_features(df, feature_config)
 print(features_df)
 ```
+
+---
+
+### _add_feature (Helper Function)
+
+**Signature:**
+```python
+def _add_feature(df: pd.DataFrame, feature_type: str, params: dict, output_name: str = None) -> pd.DataFrame:
+```
+
+**Description:**
+Helper function to add a specific feature to the DataFrame. This is an internal function used by `generate_features`.
+
+**Parameters:**
+- `df` (pd.DataFrame): Input DataFrame.
+- `feature_type` (str): Type of feature to add ('sma', 'price_change_pct_1d', etc.).
+- `params` (dict): Parameters for the feature calculation.
+- `output_name` (str, optional): Custom name for the output column. If not provided, the default naming from the underlying function is used.
+
+**Returns:**
+- `pd.DataFrame`: DataFrame with the new feature added.
+
+**Notes:**
+- This function handles the actual generation of each feature and the column name conflict resolution.
+- If `output_name` is provided, it will be used as the column name for the feature.
+- If the generated column name already exists in the DataFrame, a numerical suffix will be appended to create a unique name.
+- The function logs warnings when column conflicts occur and informs about the new column name.
+- This function is internal and not meant to be called directly by users.

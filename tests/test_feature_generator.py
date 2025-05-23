@@ -431,48 +431,119 @@ def test_generate_features_with_multiple_features():
                              name='volatility_2')
     pd.testing.assert_series_equal(result["volatility_2"], expected_vol)
 
-def test_generate_features_with_empty_config():
-    """Test generate_features function with an empty feature configuration."""
+def test_generate_features_with_multiple_sma_configurations():
+    """Test generate_features function with multiple SMAs using the new configuration formats."""
     from src.feature_generator import generate_features
     
     # Basic DataFrame
     df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
     
-    # Empty configuration
-    feature_config = {}
+    # Test with named feature instances (Case 1)
+    feature_config = {
+        "SMA_short": {"type": "sma", "column": "close", "window": 2},
+        "SMA_long": {"type": "sma", "column": "close", "window": 3}
+    }
+    result = generate_features(df, feature_config)
+    
+    # Check that both SMA columns are present with correct names
+    assert "SMA_short" in result.columns
+    assert "SMA_long" in result.columns
+    assert list(result.columns) == ["close", "SMA_short", "SMA_long"]
+    
+    # Verify values for short SMA
+    expected_short_sma = pd.Series([np.nan, 10.5, 11.5, 12.5, 13.5, 14.5], name='SMA_short')
+    pd.testing.assert_series_equal(result["SMA_short"], expected_short_sma)
+    
+    # Verify values for long SMA
+    expected_long_sma = pd.Series([np.nan, np.nan, 11.0, 12.0, 13.0, 14.0], name='SMA_long')
+    pd.testing.assert_series_equal(result["SMA_long"], expected_long_sma)
+    
+    # Test with feature type lists (Case 2)
+    feature_config = {
+        "smas": [
+            {"name": "SMA_20", "column": "close", "window": 2},
+            {"name": "SMA_50", "column": "close", "window": 3}
+        ]
+    }
+    result = generate_features(df, feature_config)
+    
+    # Check that both SMA columns are present with correct names
+    assert "SMA_20" in result.columns
+    assert "SMA_50" in result.columns
+    assert list(result.columns) == ["close", "SMA_20", "SMA_50"]
+    
+    # Verify values for SMA_20
+    expected_sma_20 = pd.Series([np.nan, 10.5, 11.5, 12.5, 13.5, 14.5], name='SMA_20')
+    pd.testing.assert_series_equal(result["SMA_20"], expected_sma_20)
+    
+    # Verify values for SMA_50
+    expected_sma_50 = pd.Series([np.nan, np.nan, 11.0, 12.0, 13.0, 14.0], name='SMA_50')
+    pd.testing.assert_series_equal(result["SMA_50"], expected_sma_50)
+    
+    # Test with mixed configuration (Case 1 + Case 3)
+    feature_config = {
+        "SMA_short": {"type": "sma", "column": "close", "window": 2},
+        "volatility_nday": {"column": "close", "window": 2}
+    }
+    result = generate_features(df, feature_config)
+    
+    # Check that both columns are present with correct names
+    assert "SMA_short" in result.columns
+    assert "volatility_2" in result.columns
+    assert list(result.columns) == ["close", "SMA_short", "volatility_2"]
+
+def test_generate_features_with_legacy_config_and_new_format():
+    """Test generate_features function with both legacy and new configuration formats."""
+    from src.feature_generator import generate_features
+    
+    # Basic DataFrame
+    df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
+    
+    # Configuration with both legacy and new formats
+    feature_config = {
+        "sma": {"column": "close", "window": 3},  # Legacy format
+        "SMA_custom": {"type": "sma", "column": "close", "window": 2}  # New format
+    }
     
     result = generate_features(df, feature_config)
     
-    # Should return the original DataFrame unchanged
-    pd.testing.assert_frame_equal(result, df)
-    assert list(result.columns) == ["close"]
+    # Check that both SMA columns are present
+    assert "sma_3" in result.columns
+    assert "SMA_custom" in result.columns
+    assert list(result.columns) == ["close", "sma_3", "SMA_custom"]
+    
+    # Verify values for legacy SMA
+    expected_sma_3 = pd.Series([np.nan, np.nan, 11.0, 12.0, 13.0, 14.0], name='sma_3')
+    pd.testing.assert_series_equal(result["sma_3"], expected_sma_3)
+    
+    # Verify values for custom named SMA
+    expected_sma_custom = pd.Series([np.nan, 10.5, 11.5, 12.5, 13.5, 14.5], name='SMA_custom')
+    pd.testing.assert_series_equal(result["SMA_custom"], expected_sma_custom)
 
-def test_generate_features_with_unrecognized_features(caplog):
-    """Test generate_features function with unrecognized features in the configuration."""
+def test_generate_features_missing_name_in_list_config(caplog):
+    """Test generate_features function with missing name in list configuration."""
     from src.feature_generator import generate_features
     
     # Basic DataFrame
     df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
     
-    # Configuration with valid and unrecognized features
+    # Configuration with missing name in list
     feature_config = {
-        "sma": {"column": "close", "window": 3},
-        "unknown_feature_1": {"param1": "value1"},
-        "unknown_feature_2": {"param2": "value2"}
+        "smas": [
+            {"name": "SMA_20", "column": "close", "window": 2},
+            {"column": "close", "window": 3}  # Missing name
+        ]
     }
     
     with caplog.at_level(logging.WARNING):
         result = generate_features(df, feature_config)
     
-    # Check that only valid feature columns are present
-    assert "sma_3" in result.columns
-    assert "unknown_feature_1" not in result.columns
-    assert "unknown_feature_2" not in result.columns
-    assert list(result.columns) == ["close", "sma_3"]
+    # Only the first SMA should be added
+    assert "SMA_20" in result.columns
+    assert list(result.columns) == ["close", "SMA_20"]
     
-    # Verify the warning logs for unrecognized features
-    assert any("Feature 'unknown_feature_1' is not recognized" in record.getMessage() for record in caplog.records)
-    assert any("Feature 'unknown_feature_2' is not recognized" in record.getMessage() for record in caplog.records)
+    # Verify warning log
+    assert any("Missing 'name' in a sma configuration" in record.getMessage() for record in caplog.records)
 
 def test_generate_features_parameter_passing():
     """Test generate_features correctly passes parameters to underlying functions."""
@@ -514,3 +585,170 @@ def test_generate_features_parameter_passing():
         mock_add_volatility.assert_called_once()
         assert mock_add_volatility.call_args[1]['column'] == "close"
         assert mock_add_volatility.call_args[1]['window'] == 3
+
+def test_generate_features_with_price_changes_volatility_metrics_lists():
+    """Test generate_features function with other predefined list keys."""
+    from src.feature_generator import generate_features
+    
+    # Basic DataFrame
+    df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
+    
+    # Test with price_changes list key
+    feature_config = {
+        "price_changes": [
+            {"name": "Daily_Change", "column": "close"}
+        ]
+    }
+    result = generate_features(df, feature_config)
+    
+    # Check that price change column is present with correct name
+    assert "Daily_Change" in result.columns
+    assert list(result.columns) == ["close", "Daily_Change"]
+    
+    # Expected values for Daily_Change (same as price_change_pct_1d but with custom name)
+    expected_pct = pd.Series([np.nan, 10.0, 9.090909090909092, 8.333333333333332, 7.6923076923076925, 7.142857142857142], 
+                             name='Daily_Change')
+    pd.testing.assert_series_equal(result["Daily_Change"], expected_pct)
+    
+    # Test with volatility_metrics list key
+    feature_config = {
+        "volatility_metrics": [
+            {"name": "Vol_10", "column": "close", "window": 2}
+        ]
+    }
+    result = generate_features(df, feature_config)
+    
+    # Check that volatility column is present with correct name
+    assert "Vol_10" in result.columns
+    assert list(result.columns) == ["close", "Vol_10"]
+    
+    # Expected values for Vol_10 (same as volatility_2 but with custom name)
+    expected_vol = pd.Series([np.nan, np.nan, 0.6428243465332251, 0.5356869554443592, 0.45327357768369, 0.3885202094431676], 
+                             name='Vol_10')
+    pd.testing.assert_series_equal(result["Vol_10"], expected_vol)
+    
+    # Test with multiple predefined list keys
+    feature_config = {
+        "smas": [
+            {"name": "SMA_Short", "column": "close", "window": 2}
+        ],
+        "price_changes": [
+            {"name": "Daily_Change", "column": "close"}
+        ],
+        "volatility_metrics": [
+            {"name": "Vol_10", "column": "close", "window": 2}
+        ]
+    }
+    result = generate_features(df, feature_config)
+    
+    # Check that all columns are present with correct names
+    assert "SMA_Short" in result.columns
+    assert "Daily_Change" in result.columns
+    assert "Vol_10" in result.columns
+    assert list(result.columns) == ["close", "SMA_Short", "Daily_Change", "Vol_10"]
+
+def test_generate_features_ignores_invalid_list_keys(caplog):
+    """Test generate_features ignores list configurations with invalid keys."""
+    from src.feature_generator import generate_features
+    import logging
+    
+    # Basic DataFrame
+    df = pd.DataFrame({'close': [10, 11, 12, 13, 14, 15]})
+    
+    # Test with invalid list key 'invalid_features'
+    feature_config = {
+        "invalid_features": [
+            {"name": "Some_Feature", "column": "close", "window": 2}
+        ],
+        "SMA_valid": {"type": "sma", "column": "close", "window": 2}  # This should still work
+    }
+    
+    # The invalid list key should be ignored with a warning
+    with caplog.at_level(logging.WARNING):
+        result = generate_features(df, feature_config)
+    
+    # Check that only the valid feature was added
+    assert "SMA_valid" in result.columns
+    assert "Some_Feature" not in result.columns
+    assert list(result.columns) == ["close", "SMA_valid"]
+    
+    # Verify warning log about unrecognized list key
+    assert any("Unrecognized list configuration key 'invalid_features'" in record.getMessage() for record in caplog.records)
+
+def test_feature_conflict_resolution(caplog):
+    """Test that the feature generator correctly handles column name conflicts."""
+    from src.feature_generator import generate_features, add_sma
+    import logging
+    
+    # Create a DataFrame with an existing 'sma_3' column
+    df = pd.DataFrame({
+        'close': [10, 11, 12, 13, 14, 15],
+        'sma_3': [100, 101, 102, 103, 104, 105]  # This is an existing column with the same name
+    })
+    
+    # Test Case 1: Legacy format with conflicting feature
+    feature_config = {
+        "sma": {"column": "close", "window": 3}
+    }
+    
+    with caplog.at_level(logging.WARNING):
+        result = generate_features(df, feature_config)
+    
+    # Verify that the original column is preserved
+    assert "sma_3" in result.columns
+    assert list(result["sma_3"]) == [100, 101, 102, 103, 104, 105]
+    
+    # Verify that the new column was renamed to avoid conflict
+    assert "sma_3_1" in result.columns
+    expected_sma = pd.Series([np.nan, np.nan, 11.0, 12.0, 13.0, 14.0], name='sma_3_1')
+    pd.testing.assert_series_equal(result["sma_3_1"], expected_sma)
+    
+    # Verify warning about column conflict
+    assert any("Column 'sma_3' already exists in DataFrame" in record.getMessage() for record in caplog.records)
+    
+    # Test Case 2: Named feature instance with conflicting name
+    df = pd.DataFrame({
+        'close': [10, 11, 12, 13, 14, 15],
+        'SMA_custom': [100, 101, 102, 103, 104, 105]  # This is an existing column with the same name
+    })
+    
+    feature_config = {
+        "SMA_custom": {"type": "sma", "column": "close", "window": 2}
+    }
+    
+    with caplog.at_level(logging.WARNING):
+        result = generate_features(df, feature_config)
+    
+    # Verify that the original column is preserved
+    assert "SMA_custom" in result.columns
+    assert list(result["SMA_custom"]) == [100, 101, 102, 103, 104, 105]
+    
+    # Verify that the new column was renamed to avoid conflict
+    assert "SMA_custom_1" in result.columns
+    expected_sma_custom = pd.Series([np.nan, 10.5, 11.5, 12.5, 13.5, 14.5], name='SMA_custom_1')
+    pd.testing.assert_series_equal(result["SMA_custom_1"], expected_sma_custom)
+    
+    # Test Case 3: Multiple conflicts requiring different suffixes
+    df = pd.DataFrame({
+        'close': [10, 11, 12, 13, 14, 15],
+        'sma_2': [100, 101, 102, 103, 104, 105],
+        'sma_2_1': [200, 201, 202, 203, 204, 205]
+    })
+    
+    feature_config = {
+        "sma": {"column": "close", "window": 2}
+    }
+    
+    with caplog.at_level(logging.WARNING):
+        result = generate_features(df, feature_config)
+    
+    # Verify that the original columns are preserved
+    assert "sma_2" in result.columns
+    assert "sma_2_1" in result.columns
+    assert list(result["sma_2"]) == [100, 101, 102, 103, 104, 105]
+    assert list(result["sma_2_1"]) == [200, 201, 202, 203, 204, 205]
+    
+    # Verify that the new column was renamed with suffix _2
+    assert "sma_2_2" in result.columns
+    expected_sma_2_2 = pd.Series([np.nan, 10.5, 11.5, 12.5, 13.5, 14.5], name='sma_2_2')
+    pd.testing.assert_series_equal(result["sma_2_2"], expected_sma_2_2)
