@@ -178,16 +178,38 @@ The application will consist of the following Python modules:
     *   Track portfolio value (assume fixed starting capital).
     *   Implement "long only, one position at a time" logic.
     *   No transaction costs or slippage for v0.1.
+    *   Provide enhanced portfolio analytics including composition, returns, and drawdown tracking.
 *   **Interfaces:**
     *   `run_backtest(df_with_signals: pd.DataFrame, initial_capital: float, signal_col: str = 'Signal', price_col: str = 'Close') -> tuple[list[dict], pd.Series]:`
         *   Input: DataFrame with features and a `Signal` column, initial capital.
         *   Output:
-            *   `trade_log`: A list of dictionaries, where each dictionary represents a trade (e.g., `{'entry_date': ..., 'entry_price': ..., 'exit_date': ..., 'exit_price': ..., 'profit_pct': ...}`).
-            *   `portfolio_values`: A Pandas Series representing the portfolio value over time, indexed by date.
+            *   `trade_log`: A list of dictionaries, where each dictionary represents a completed trade (e.g., `{'buy_price': float, 'sell_price': float, 'shares': float, 'profit': float}`).
+            *   `portfolio_values`: A Pandas Series representing the portfolio value over time, indexed to match the input DataFrame.
+        *   Raises: `ValueError` if required columns are missing.
+    *   `run_backtest_enhanced(df_with_signals: pd.DataFrame, initial_capital: float, signal_col: str = 'Signal', price_col: str = 'Close') -> tuple[list[dict], PortfolioData]:`
+        *   Input: Same as `run_backtest`.
+        *   Output:
+            *   `trade_log`: Same trade log structure as `run_backtest`.
+            *   `portfolio_data`: A `PortfolioData` NamedTuple containing comprehensive portfolio analytics.
+        *   Purpose: Enhanced backtesting with detailed portfolio composition tracking, returns analysis, and drawdown metrics.
+        *   Raises: `ValueError` if required columns are missing.
 *   **Key Data Structures:**
+    *   `PortfolioData(NamedTuple)`: Enhanced portfolio data structure containing:
+        *   `portfolio_values`: pd.Series - Total portfolio value over time
+        *   `cash_values`: pd.Series - Cash component over time
+        *   `equity_values`: pd.Series - Equity component over time  
+        *   `cash_pct`: pd.Series - Cash percentage of portfolio
+        *   `equity_pct`: pd.Series - Equity percentage of portfolio
+        *   `period_returns`: pd.Series - Period-over-period returns (%)
+        *   `cumulative_returns`: pd.Series - Cumulative returns from start (%)
+        *   `running_drawdown`: pd.Series - Running drawdown from peak (%)
+        *   `peak_values`: pd.Series - Peak portfolio values achieved
     *   Internal state: `current_position` (bool), `entry_price` (float), `shares_held` (float), `cash` (float), `portfolio_value` (float).
-    *   Output: List of trade dictionaries, Pandas Series for portfolio values.
-*   **Applicable Design Patterns:** Simulation loop.
+    *   Trade log structure: List of dictionaries with keys: `buy_price`, `sell_price`, `shares`, `profit`.
+*   **Applicable Design Patterns:** 
+    *   Simulation loop for trade execution.
+    *   Shared core logic pattern with `_process_trading_signals()` internal function.
+    *   Modular design with `_calculate_portfolio_metrics()` for reusable calculations.
 *   **Interaction with other components:** Called by `main.py`. Takes DataFrame with signals.
 
 **4.7. `metrics.py`**

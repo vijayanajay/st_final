@@ -248,12 +248,32 @@ print(result_df)
 **Location:** src/backtester.py
 
 **Purpose:**
-Provides the simulation framework for backtesting trading strategies based on generated signals. The main interface is `run_backtest`, which accepts a DataFrame with signals and prices, an initial capital amount, and returns a trade log and portfolio value series. Only the function skeleton and input validation are implemented as of 2025-05-23.
+Provides a complete simulation framework for backtesting long-only trading strategies based on generated signals. Implements position tracking, trade execution, and portfolio valuation over time with both basic and enhanced tracking capabilities for detailed portfolio analytics.
 
 **Key Functions:**
 - `run_backtest(df_with_signals: pd.DataFrame, initial_capital: float, signal_col: str = 'Signal', price_col: str = 'Close') -> tuple[list[dict], pd.Series]`
     - **Primary interface as specified in design.md.**
-    - Simulates trading based on signals in the DataFrame.
-    - **Returns:** Tuple of trade log (list of dict) and portfolio values (pd.Series). Currently returns empty structures.
+    - Simulates long-only trading based on signals in the DataFrame.
+    - **Trading Logic:** Signal=1 for buy (ignored if already in position), Signal=-1 for sell (ignored if no position), Signal=0 for hold.
+    - **Returns:** Tuple of completed trade log (list of dict with buy_price, sell_price, shares, profit) and portfolio values (pd.Series indexed to input DataFrame).
     - **Raises:** ValueError if required columns are missing.
-    - **Logging:** Prints a message when called (to be replaced with structured logging in future tasks).
+    - **Portfolio Tracking:** Calculates portfolio value as cash + (shares × current_price) for each row.
+    - **Position Management:** Buys maximum shares with available cash, sells entire position on sell signal.
+    - **Logging:** Structured logging with debug messages for buy/sell actions.
+
+- `run_backtest_enhanced(df_with_signals: pd.DataFrame, initial_capital: float, signal_col: str = 'Signal', price_col: str = 'Close') -> tuple[list[dict], PortfolioData]`
+    - **Enhanced backtesting with detailed portfolio composition and analytics.**
+    - Same trading logic as basic version but returns comprehensive PortfolioData structure.
+    - **Enhanced Features:** Portfolio composition tracking (cash vs equity percentages with exact 0% cash/100% equity when in position, 100% cash/0% equity otherwise), period and cumulative return calculations, running drawdown analysis from portfolio peaks, detailed time-series data for all metrics.
+    - **Returns:** Tuple of trade log and PortfolioData NamedTuple with 9 portfolio tracking components.
+
+**Data Structures:**
+- `PortfolioData(NamedTuple)`: Enhanced portfolio data structure with portfolio_values, cash_values, equity_values, cash_pct, equity_pct, period_returns, cumulative_returns, running_drawdown, peak_values.
+
+**Architecture:**
+- **Shared Core Logic:** `_process_trading_signals()` handles common trading logic for both basic and enhanced modes.
+- **Modular Design:** `_calculate_portfolio_metrics()` provides reusable metric calculations.
+- **Backward Compatibility:** Original `run_backtest()` API remains unchanged.
+- **Type Safety:** Uses NamedTuple for structured data and comprehensive type hints.
+
+**Implementation Status:** ✅ Complete (Tasks 18, 19, 20, 21 & 22) - Fully implemented with enhanced portfolio tracking capabilities and 22 comprehensive tests covering all trading scenarios, portfolio analytics, and edge cases. Full trade execution simulation, comprehensive trade logging, and complete test coverage achieved.

@@ -45,6 +45,17 @@
 ---
 
 ---
+**Issue ID:** CODE-001
+**Original Description (Concise):** Code Duplication in `src/backtester.py`. The `PortfolioData` NamedTuple was defined twice, identically, within the file at lines 16-25 and 27-36, violating DRY principles.
+**Initial Resolution Summary (Concise):** As of 2025-05-24, removed the duplicate definition of `PortfolioData` NamedTuple while maintaining all functionality and test coverage. The module now has a single, clean definition of the `PortfolioData` class.
+**Date First Resolved:** 2025-05-24
+**Reopen Count:** 0
+**Last Reopened Date:** 
+**Last Resolution Summary (Concise):** Removed the duplicate definition of `PortfolioData` NamedTuple while maintaining all functionality and test coverage. Verified that all tests continue to pass.
+**Date Last Resolved:** 2025-05-24
+---
+
+---
 **Issue ID:** DESIGN-001
 **Original Description (Concise):** Design Deviation & Documentation Mismatch for Feature Generation Orchestration. The `generate_features` function in `src/feature_generator.py` was implemented with a different signature and behavior than specified in `docs/design.md`, leading to documentation inconsistency.
 **Initial Resolution Summary (Concise):** As of 2025-05-23, updated `docs/design.md` to reflect the actual implemented behavior of `generate_features` which uses a more flexible feature_config approach instead of the originally designed strategy_params approach.
@@ -113,4 +124,26 @@
 **Last Reopened Date:**
 **Last Resolution Summary (Concise):** Implemented a proper Strategy pattern in the strategies module, allowing for extensible strategy implementations without modifying the `apply_strategy` function. All existing tests continue to pass, and new tests have been added to verify the Strategy pattern implementation.
 **Date Last Resolved:** 2025-05-23
+---
+
+---
+**Issue ID:** DOC-001
+**Original Description (Concise):** Documentation Veracity Failure in `docs/tasks.md`. Tasks 20, 21, and 22 in the Backtester Module were marked as incomplete [ ] despite being fully implemented in `src/backtester.py` with comprehensive test coverage, violating Core Engineering Principle #6.
+**Initial Resolution Summary (Concise):** As of 2025-05-23, updated task completion statuses to accurately reflect implementation reality: Tasks 20 (trade execution simulation), 21 (trade logging functionality), and 22 (backtester tests) marked as complete with detailed descriptions. Progress summary corrected from 19/30 (63%) to 22/30 (73%). Systemic prevention measures mandated for future documentation-code synchronization.
+**Date First Resolved:** 2025-05-23
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Documentation veracity restored by correcting task statuses and implementing verification requirements for documentation-code alignment.
+**Date Last Resolved:** 2025-05-23
+---
+
+---
+**Issue ID:** TEST-005
+**Original Description (Concise):** Test Logic Flaw (Incorrect Assertion) in `test_backtester.py`. The test was asserting that `portfolio_data.cash_pct.iloc[1] < 5.0` after a buy operation, when it should expect exactly 0.0% cash (as all cash is converted to equity).
+**Initial Resolution Summary (Concise):** As of 2025-05-24, updated `test_portfolio_composition_tracking()` to use precise assertions that match the exact expected behavior: `assert portfolio_data.cash_pct.iloc[1] == 0.0` and `assert portfolio_data.equity_pct.iloc[1] == 100.0`. Updated all relevant documentation to reflect this precise behavior.
+**Date First Resolved:** 2025-05-24
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Corrected the test assertions to validate the exact expected behavior based on the backtesting logic. Updated documentation in `docs/src/backtester.py.md`, `docs/codebase_overview.md`, and `docs/file_structure.md` to clearly state that portfolio composition should be exactly 0% cash/100% equity when in position, and 100% cash/0% equity otherwise.
+**Date Last Resolved:** 2025-05-24
 ---
