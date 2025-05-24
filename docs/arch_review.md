@@ -5,7 +5,7 @@
 
 ## RESOLVED ISSUES
 
-All previously documented architectural directives (TEST-001, LOG-001, TEST-002) were confirmed as RESOLVED as of 2025-05-20. The TEST-003 issue identified on 2025-05-23 has been RESOLVED. The DESIGN-001 issue related to feature generation orchestration identified on 2025-05-23 has been RESOLVED. The TEST-004 issue related to suboptimal test implementation has been RESOLVED. The IMPORT-001 issue related to non-standard import practices in test_backtester.py has been RESOLVED. The TEST-005 issue related to imprecise test assertions in backtester tests has been RESOLVED as of 2025-05-24. The CODE-001 issue related to duplicate NamedTuple definition in backtester.py has been RESOLVED as of 2025-05-24. The TEST-008 issue related to standalone integration test has been RESOLVED as of 2025-05-24. The DOC-003 issue related to misplaced documentation file has been RESOLVED as of 2025-05-24. Refer to `resolved_issues.md` for details.
+All previously documented architectural directives (TEST-001, LOG-001, TEST-002) were confirmed as RESOLVED as of 2025-05-20. The TEST-003 issue identified on 2025-05-23 has been RESOLVED. The DESIGN-001 issue related to feature generation orchestration identified on 2025-05-23 has been RESOLVED. The TEST-004 issue related to suboptimal test implementation has been RESOLVED. The IMPORT-001 issue related to non-standard import practices in test_backtester.py has been RESOLVED. The TEST-005 issue related to imprecise test assertions in backtester tests has been RESOLVED as of 2025-05-24. The CODE-001 issue related to duplicate NamedTuple definition in backtester.py has been RESOLVED as of 2025-05-24. The TEST-008 issue related to standalone integration test has been RESOLVED as of 2025-05-24. The DOC-003 issue related to misplaced documentation file has been RESOLVED as of 2025-05-24. The TEST-009 issue related to duplicate test files for metrics.py has been RESOLVED as of 2025-05-24. Refer to `resolved_issues.md` for details.
 
 ---
 
@@ -78,6 +78,8 @@ _None at this time._
 **TEST-008 (RESOLVED):** Standalone Integration Test Not Integrated into Test Suite. The `integration_test.py` script in the root directory was not integrated into the pytest test suite and used the legacy API. ✅ **RESOLVED** - Refactored into proper pytest test functions in `tests/test_integration.py` that use the recommended `apply_strategy` API.
 
 **DOC-003 (RESOLVED):** Misplaced Documentation File in Incorrect Directory. The `docs/src/test_feature_generator.py.md` file was incorrectly located, as test documentation should be in `docs/tests/`. ✅ **RESOLVED** - Consolidated documentation into `docs/tests/test_feature_generator.py.md` with comprehensive content.
+
+**TEST-009 (RESOLVED):** Test Code Quality Degradation (Duplicate Test File). The file `tests/test_metrics_task25.py` was a complete duplicate of the Task 25 risk/reward metrics tests already present in `tests/test_metrics.py`. ✅ **RESOLVED** - Verified all test functions were duplicated, removed the redundant `tests/test_metrics_task25.py` file, and confirmed that all test coverage is maintained in the main test file.
 
 ---
 

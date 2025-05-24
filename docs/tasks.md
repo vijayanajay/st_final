@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 23  
-**Remaining**: 7  
-**Progress**: 77%
+**Completed**: 25  
+**Remaining**: 5  
+**Progress**: 83%
 
 ## Tasks
 
@@ -41,10 +41,10 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 21. [x] **Create trade logging functionality** - Implement detailed logging of trade activities. ✅ **COMPLETE** - Comprehensive trade logging captures buy_price, sell_price, shares, and profit for each completed trade.
 22. [x] **Write tests for backtester.py** - Create pytest tests for backtesting functionality. ✅ **COMPLETE** - 22 comprehensive tests covering all trading scenarios, portfolio analytics, edge cases, and enhanced tracking features.
 
-### Performance Metrics Module (1/4)
+### Performance Metrics Module (2/4)
 23. [x] **Create metrics.py with basic return calculations** - Implement total and annualized return metrics. ✅ **COMPLETE** - TDD implementation with total return and annualized return calculations, comprehensive input validation, and 16 passing tests. Module documentation created.
-24. [ ] **Add drawdown and trade metrics** - Implement max drawdown, win rate, and trade count metrics
-25. [ ] **Add risk/reward metrics** - Implement Sharpe ratio and profit factor calculations
+24. [x] **Add drawdown and trade metrics** - Implement max drawdown, win rate, and trade count metrics. ✅ **COMPLETE** - TDD implementation with max drawdown calculation using pandas cummax(), trade count, and win rate percentage. Added 12 comprehensive tests and enhanced print formatting. All 28 tests passing.
+25. [x] **Add risk/reward metrics** - Implement Sharpe ratio and profit factor calculations ✅ **COMPLETE** - TDD implementation with Sharpe ratio calculation, profit factor, and average win/loss percentage metrics. Added 17 comprehensive tests focusing on risk/reward metrics. All 62 tests passing.
 26. [ ] **Write tests for metrics.py** - Create pytest tests for performance metrics calculations
 
 ### Main Application (0/3)
@@ -68,8 +68,15 @@ Each task is considered complete when:
 ---
 
 **Recent Updates (2025-05-24):**
-- Completed Task 23: Created metrics.py with basic return calculations (total return and annualized return).
-- Implemented metrics.py with comprehensive TDD methodology resulting in 16 passing tests.
+- Completed Task 25: Added risk/reward metrics (Sharpe ratio, profit factor, average win/loss percentages).
+- Implemented metrics.py extensions with comprehensive TDD methodology resulting in 62 passing tests.
+- Updated documentation in docs/src/metrics.py.md with details of new risk/reward metrics, formulas, and examples.
+- Refactored metrics calculation with helper functions for better code organization.
+- Fixed numpy integration for Sharpe ratio calculation.
+
+**Previous Updates (2025-05-23):**
+- Completed Task 24: Added drawdown and trade metrics (max drawdown, trade count, win rate).
+- Implemented metrics.py with comprehensive TDD methodology resulting in 28 passing tests.
 - Created detailed documentation in docs/src/metrics.py.md with API details, architecture, examples, and test coverage.
 - Updated file_structure.md and codebase_overview.md to reflect the new metrics.py module.
 - Increased documentation completion percentage from 0.5 to 0.6 with the addition of metrics.py documentation.

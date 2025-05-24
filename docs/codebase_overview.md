@@ -284,21 +284,42 @@ Provides a complete simulation framework for backtesting long-only trading strat
 **Location:** src/metrics.py
 
 **Purpose:**
-Provides performance metrics calculation functionality for analyzing backtesting results. Calculates key financial metrics including total returns and annualized returns from trade logs and portfolio value series. Designed to support comprehensive portfolio performance analysis with an extensible architecture for additional metrics.
+Provides performance metrics calculation functionality for analyzing backtesting results. Calculates key financial metrics including total returns, annualized returns, maximum drawdown, trade metrics, and risk/reward metrics from trade logs and portfolio value series. Designed to support comprehensive portfolio performance analysis with an extensible architecture for additional metrics.
 
 **Key Functions:**
 - `calculate_metrics(trade_log: List[Dict], portfolio_values: pd.Series, initial_capital: float, risk_free_rate: float = 0.0) -> Dict`
     - **Primary interface as specified in design.md.**
-    - Calculates performance metrics from backtesting results.
-    - **Returns:** Dictionary with metrics (currently 'total_return_pct' and 'annualized_return_pct').
+    - Calculates comprehensive performance metrics from backtesting results.
+    - **Returns:** Dictionary with 9 key metrics measuring various aspects of backtesting performance.
     - **Raises:** ValueError if initial_capital is <= 0 or portfolio_values is empty.
-    - **Metrics Calculation:**
+    - **Basic Metrics Calculation:**
         - **Total Return:** ((final_value - initial_capital) / initial_capital) * 100
         - **Annualized Return:** (((final_value / initial_capital) ** (1 / years)) - 1) * 100
+    - **Trade Metrics Calculation:**
+        - **Max Drawdown:** Largest peak-to-trough decline in portfolio value as percentage
+        - **Trade Count:** Number of completed trades from trade log
+        - **Win Rate:** Percentage of trades with positive profit
+    - **Risk/Reward Metrics Calculation:**
+        - **Sharpe Ratio:** Risk-adjusted return measure (annualized)
+        - **Profit Factor:** Ratio of gross profits to gross losses
+        - **Average Win/Loss Percentages:** Average gain/loss percentages of winning/losing trades
     - **Time Handling:** Automatically detects datetime index for proper annualization.
-    - **Edge Cases:** Returns 0% annualized return for zero-duration periods.
+    - **Edge Cases:** Returns 0% annualized return for zero-duration periods, handles empty trade logs.
 
 - `print_metrics(metrics_dict: Dict) -> None`
+    - Formats and displays metrics dictionary to console with 2 decimal places.
+    - Handles partial metrics dictionaries gracefully, displaying only available metrics.
+    - Produces professional, clearly labeled output for all 9 supported metrics.
+
+**Helper Functions:**
+- `_calculate_max_drawdown(portfolio_values: pd.Series) -> float`
+- `_calculate_win_rate(trade_log: List[Dict]) -> float`
+- `_calculate_sharpe_ratio(portfolio_returns: pd.Series, risk_free_rate: float) -> float`
+- `_calculate_profit_factor(trade_log: List[Dict]) -> float`
+- `_calculate_avg_win_pct(trade_log: List[Dict]) -> float`
+- `_calculate_avg_loss_pct(trade_log: List[Dict]) -> float`
+
+**Implementation Status:** ✅ Complete (Tasks 23, 24 & 25) - Fully implemented with comprehensive TDD methodology resulting in 62 passing tests covering all metrics calculations, edge cases, and formatting. Full documentation in docs/src/metrics.py.md with detailed API references, formulas, and examples.
     - Displays formatted metrics to console for user review.
     - Presents metrics with 2 decimal places and clear labeling.
     - Handles partial metric dictionaries gracefully.
