@@ -6,6 +6,13 @@ import pytest
 import logging
 from configs.logging_config import setup_logging
 
+# Register custom pytest marks
+def pytest_configure(config):
+    """Register custom pytest markers."""
+    config.addinivalue_line(
+        "markers", "integration: mark tests as integration tests that verify multiple components working together"
+    )
+
 @pytest.fixture(scope="session", autouse=True)
 def configure_logging():
     """

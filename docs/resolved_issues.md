@@ -195,3 +195,14 @@
 **Last Resolution Summary (Concise):** Added missing numeric column validation to the `add_sma` function, updated tests to include this validation check, and ensured documentation consistency. This provides clearer error messages and matches the pattern established in other feature generation functions.
 **Date Last Resolved:** 2025-05-24
 ---
+
+---
+**Issue ID:** TEST-008
+**Original Description (Concise):** Standalone Integration Test Not Integrated into Test Suite. The `integration_test.py` script in the root directory was not integrated into the pytest test suite and used the legacy API.
+**Initial Resolution Summary (Concise):** As of 2025-05-24, refactored the standalone integration test into proper pytest test functions in `tests/test_integration.py` that use the recommended `apply_strategy` API. The integrated tests cover feature generation and strategy implementation, including backward compatibility and multiple feature types.
+**Date First Resolved:** 2025-05-24
+**Reopen Count:** 0
+**Last Reopened Date:**
+**Last Resolution Summary (Concise):** Refactored the standalone `integration_test.py` script into proper pytest test functions in `tests/test_integration.py`. The new tests use the recommended primary `apply_strategy` API, maintain the same functionality, and generate equivalent output files for manual inspection. Added comprehensive documentation in `docs/tests/test_integration.py.md` and updated references in `docs/file_structure.md` and `docs/codebase_overview.md`.
+**Date Last Resolved:** 2025-05-24
+---

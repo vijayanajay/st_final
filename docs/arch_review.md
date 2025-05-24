@@ -5,7 +5,7 @@
 
 ## RESOLVED ISSUES
 
-All previously documented architectural directives (TEST-001, LOG-001, TEST-002) were confirmed as RESOLVED as of 2025-05-20. The TEST-003 issue identified on 2025-05-23 has been RESOLVED. The DESIGN-001 issue related to feature generation orchestration identified on 2025-05-23 has been RESOLVED. The TEST-004 issue related to suboptimal test implementation has been RESOLVED. The IMPORT-001 issue related to non-standard import practices in test_backtester.py has been RESOLVED. The TEST-005 issue related to imprecise test assertions in backtester tests has been RESOLVED as of 2025-05-24. The CODE-001 issue related to duplicate NamedTuple definition in backtester.py has been RESOLVED as of 2025-05-24. Refer to `resolved_issues.md` for details.
+All previously documented architectural directives (TEST-001, LOG-001, TEST-002) were confirmed as RESOLVED as of 2025-05-20. The TEST-003 issue identified on 2025-05-23 has been RESOLVED. The DESIGN-001 issue related to feature generation orchestration identified on 2025-05-23 has been RESOLVED. The TEST-004 issue related to suboptimal test implementation has been RESOLVED. The IMPORT-001 issue related to non-standard import practices in test_backtester.py has been RESOLVED. The TEST-005 issue related to imprecise test assertions in backtester tests has been RESOLVED as of 2025-05-24. The CODE-001 issue related to duplicate NamedTuple definition in backtester.py has been RESOLVED as of 2025-05-24. The TEST-008 issue related to standalone integration test has been RESOLVED as of 2025-05-24. The DOC-003 issue related to misplaced documentation file has been RESOLVED as of 2025-05-24. Refer to `resolved_issues.md` for details.
 
 ---
 
@@ -75,6 +75,10 @@ _None at this time._
 
 **INPUT-001 (RESOLVED):** Missing Input Validation in `src/feature_generator.py`. The `add_sma` function lacked validation to ensure the input column is numeric, inconsistent with other similar functions in the same module. ✅ **RESOLVED** - Added explicit numeric type check using `pd.api.types.is_numeric_dtype`, with appropriate error messages and tests.
 
+**TEST-008 (RESOLVED):** Standalone Integration Test Not Integrated into Test Suite. The `integration_test.py` script in the root directory was not integrated into the pytest test suite and used the legacy API. ✅ **RESOLVED** - Refactored into proper pytest test functions in `tests/test_integration.py` that use the recommended `apply_strategy` API.
+
+**DOC-003 (RESOLVED):** Misplaced Documentation File in Incorrect Directory. The `docs/src/test_feature_generator.py.md` file was incorrectly located, as test documentation should be in `docs/tests/`. ✅ **RESOLVED** - Consolidated documentation into `docs/tests/test_feature_generator.py.md` with comprehensive content.
+
 ---
 
 ## AUDIT NOTES
@@ -90,3 +94,5 @@ _None at this time._
 - Test imports in `test_backtester.py` have been standardized to use proper Python module imports rather than dynamic imports, improving code clarity and maintainability.
 - Test assertions in `test_backtester.py` have been made more precise, ensuring they match the exact expected behavior of the backtesting logic. In particular, portfolio composition tracking assertions now verify exact values (0% cash/100% equity when in position) rather than using less precise comparisons.
 - Test code duplication in `test_data_loader.py` has been eliminated by removing redundant tests for the legacy `fetch` function and keeping only one test that verifies the wrapper behavior. This significantly reduced code duplication while maintaining comprehensive test coverage of the primary `fetch_data` function.
+- Standalone integration test has been properly integrated into the pytest test suite. The original `integration_test.py` in the project root has been refactored into `tests/test_integration.py` with proper pytest structure and use of the recommended primary API (`apply_strategy`).
+- Documentation structure has been standardized by ensuring test documentation resides in `docs/tests/` directory. The misplaced documentation file (`docs/src/test_feature_generator.py.md`) has been consolidated with the correctly located file.

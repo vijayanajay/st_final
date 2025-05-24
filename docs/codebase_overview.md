@@ -278,3 +278,64 @@ Provides a complete simulation framework for backtesting long-only trading strat
 - **Type Safety:** Uses NamedTuple for structured data and comprehensive type hints.
 
 **Implementation Status:** ✅ Complete (Tasks 18, 19, 20, 21 & 22) - Fully implemented with enhanced portfolio tracking capabilities and 22 comprehensive tests covering all trading scenarios, portfolio analytics, and edge cases. Full trade execution simulation, comprehensive trade logging, and complete test coverage achieved.
+
+## metrics.py
+
+**Location:** src/metrics.py
+
+**Purpose:**
+Provides performance metrics calculation functionality for analyzing backtesting results. Calculates key financial metrics including total returns and annualized returns from trade logs and portfolio value series. Designed to support comprehensive portfolio performance analysis with an extensible architecture for additional metrics.
+
+**Key Functions:**
+- `calculate_metrics(trade_log: List[Dict], portfolio_values: pd.Series, initial_capital: float, risk_free_rate: float = 0.0) -> Dict`
+    - **Primary interface as specified in design.md.**
+    - Calculates performance metrics from backtesting results.
+    - **Returns:** Dictionary with metrics (currently 'total_return_pct' and 'annualized_return_pct').
+    - **Raises:** ValueError if initial_capital is <= 0 or portfolio_values is empty.
+    - **Metrics Calculation:**
+        - **Total Return:** ((final_value - initial_capital) / initial_capital) * 100
+        - **Annualized Return:** (((final_value / initial_capital) ** (1 / years)) - 1) * 100
+    - **Time Handling:** Automatically detects datetime index for proper annualization.
+    - **Edge Cases:** Returns 0% annualized return for zero-duration periods.
+
+- `print_metrics(metrics_dict: Dict) -> None`
+    - Displays formatted metrics to console for user review.
+    - Presents metrics with 2 decimal places and clear labeling.
+    - Handles partial metric dictionaries gracefully.
+
+**Architecture:**
+- **Input Validation:** Ensures initial_capital > 0 and portfolio_values is not empty.
+- **Time-Series Intelligence:** Identifies datetime-indexed portfolio series for accurate annualization.
+- **Extensible Design:** Modular structure with consistent interface for future metrics.
+
+**Implementation Status:** ✅ Complete (Task 23) - Implemented with TDD methodology including 16 comprehensive tests covering basic functionality, edge cases, and error handling. Total return and annualized return calculations are fully implemented with proper datetime handling and error validation.
+
+**Testing:**
+- Comprehensive unit tests in `tests/test_metrics.py` verify the functionality of both `calculate_metrics` and `print_metrics` functions, including:
+  - Basic return calculations (gains, losses, no change)
+  - Annualized return calculation with proper time handling (1-year, 2-year, and single-day periods)
+  - Error handling for invalid inputs (empty portfolio, non-positive initial capital)  - Edge cases (single portfolio value, zero-duration periods)
+  - Proper formatting of console output
+  - Integration with backtester-like data structures
+  - These tests ensure the reliability and accuracy of financial calculations, providing confidence in performance metrics.
+
+## Integration Testing
+
+**Location:** tests/test_integration.py
+
+**Purpose:**
+Verifies that multiple modules work together correctly, ensuring the application functions as a cohesive system. The integration tests focus on key interaction points between modules, particularly feature generation and strategy implementation.
+
+**Key Test Functions:**
+- `test_feature_generation_and_strategy_integration`: Verifies that feature generation and SMA crossover strategy work together correctly with multiple SMA configurations.
+- `test_legacy_feature_config_integration`: Tests backward compatibility with legacy feature configuration formats.
+- `test_multiple_feature_types_integration`: Ensures that multiple feature types (SMA, price change, volatility) can be generated and used together.
+- `test_end_to_end_integration_with_results_file`: Comprehensive end-to-end test that generates a detailed results file for manual inspection.
+
+**Architecture Notes:**
+- All integration tests use the recommended primary API (`apply_strategy` from `src.strategies`) rather than legacy wrapper functions.
+- These tests are properly integrated into the pytest test suite with appropriate markers (`@pytest.mark.integration`).
+- The `test_end_to_end_integration_with_results_file` function replaces the functionality of the standalone `integration_test.py` script that previously existed in the project root.
+- Integration test output file `integration_test_results.txt` is gitignored to prevent version control of test outputs.
+
+**Implementation Status:** ✅ Complete - All integration tests are fully implemented with proper pytest integration and use of recommended API functions. The tests provide comprehensive verification that the system's components work together correctly.
