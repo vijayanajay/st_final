@@ -319,7 +319,7 @@ Provides performance metrics calculation functionality for analyzing backtesting
 - `_calculate_avg_win_pct(trade_log: List[Dict]) -> float`
 - `_calculate_avg_loss_pct(trade_log: List[Dict]) -> float`
 
-**Implementation Status:** ✅ Complete (Tasks 23, 24 & 25) - Fully implemented with comprehensive TDD methodology resulting in 62 passing tests covering all metrics calculations, edge cases, and formatting. Full documentation in docs/src/metrics.py.md with detailed API references, formulas, and examples.
+**Implementation Status:** ✅ Fully implemented with comprehensive TDD methodology resulting in 62 passing tests covering all metrics calculations, edge cases, and formatting. Full documentation in docs/src/metrics.py.md with detailed API references, formulas, and examples.
     - Displays formatted metrics to console for user review.
     - Presents metrics with 2 decimal places and clear labeling.
     - Handles partial metric dictionaries gracefully.
@@ -328,8 +328,6 @@ Provides performance metrics calculation functionality for analyzing backtesting
 - **Input Validation:** Ensures initial_capital > 0 and portfolio_values is not empty.
 - **Time-Series Intelligence:** Identifies datetime-indexed portfolio series for accurate annualization.
 - **Extensible Design:** Modular structure with consistent interface for future metrics.
-
-**Implementation Status:** ✅ Complete (Task 23) - Implemented with TDD methodology including 16 comprehensive tests covering basic functionality, edge cases, and error handling. Total return and annualized return calculations are fully implemented with proper datetime handling and error validation.
 
 **Testing:**
 - Comprehensive unit tests in `tests/test_metrics.py` verify the functionality of both `calculate_metrics` and `print_metrics` functions, including:

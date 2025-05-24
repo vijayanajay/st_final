@@ -5,9 +5,9 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 
 ## Progress Summary
 **Total Tasks**: 30  
-**Completed**: 25  
-**Remaining**: 5  
-**Progress**: 83%
+**Completed**: 26  
+**Remaining**: 4  
+**Progress**: 87%
 
 ## Tasks
 
@@ -45,7 +45,7 @@ This document outlines the implementation tasks for the Simple Stock Strategy Ba
 23. [x] **Create metrics.py with basic return calculations** - Implement total and annualized return metrics. ✅ **COMPLETE** - TDD implementation with total return and annualized return calculations, comprehensive input validation, and 16 passing tests. Module documentation created.
 24. [x] **Add drawdown and trade metrics** - Implement max drawdown, win rate, and trade count metrics. ✅ **COMPLETE** - TDD implementation with max drawdown calculation using pandas cummax(), trade count, and win rate percentage. Added 12 comprehensive tests and enhanced print formatting. All 28 tests passing.
 25. [x] **Add risk/reward metrics** - Implement Sharpe ratio and profit factor calculations ✅ **COMPLETE** - TDD implementation with Sharpe ratio calculation, profit factor, and average win/loss percentage metrics. Added 17 comprehensive tests focusing on risk/reward metrics. All 62 tests passing.
-26. [ ] **Write tests for metrics.py** - Create pytest tests for performance metrics calculations
+26. [x] **Write tests for metrics.py** - Create pytest tests for performance metrics calculations. ✅ **COMPLETE** - See `tests/test_metrics.py` (62 tests, 17 new for Task 25). See also `docs/src/metrics.py.md` for TDD methodology and coverage details. Task status updated 2025-05-25 to reflect actual codebase and documentation state.
 
 ### Main Application (0/3)
 27. [ ] **Create main.py entry point** - Implement main script with configurable constants
@@ -96,3 +96,8 @@ Each task is considered complete when:
 - Logging and testability for config parsing are now robust and standardized.
 - Documentation for `config_parser.py` and log testing approach added to `docs/`.
 - Sample SMA crossover strategy config (`configs/strategies/sma_cross.yaml`) created and supported by parser/tests.
+
+---
+
+**Process Note (2025-05-25):**
+All contributors must update `docs/tasks.md` as the final step when completing any task, especially for test creation. Task status must reflect the true state of the codebase and documentation. Consider linking task completion to PR merges that include the relevant code/tests to prevent future discrepancies.

@@ -18,7 +18,8 @@ This document describes the directory structure for the Simple Stock Strategy Ba
     - `__init__.py` — Ensures the directory is recognized as a Python package.    - `test_data_loader.py` — Tests for src/data_loader.py, including both unit (mocked) and integration (real API, optionally skipped) tests.
     - `test_feature_generator.py` — Tests for src/feature_generator.py.
     - `test_config_parser.py` — Tests for src/config_parser.py.    - `test_strategies.py` — Tests for the `generate_sma_crossover_signals` function in src/strategies.py.
-    - `test_apply_strategy.py` — Comprehensive tests for the apply_strategy function in src/strategies.py, covering correct signal generation, parameter validation, different column names, empty DataFrames, NaN handling, logging verification, and DataFrame immutability.    - `test_strategy_pattern.py` — Tests for the Strategy pattern implementation in src/strategies.py, including tests for `BaseStrategy`, `SMACrossoverStrategy`, and the strategy registry.
+    - `test_apply_strategy.py` — Comprehensive tests for the apply_strategy function in src/strategies.py, covering correct signal generation, parameter validation, different column names, empty DataFrames, NaN handling, logging verification, and DataFrame immutability.
+    - `test_strategy_pattern.py` — Tests for the Strategy pattern implementation in src/strategies.py, including tests for `BaseStrategy`, `SMACrossoverStrategy`, and the strategy registry.
     - `test_integration.py` — Integration tests that verify multiple modules work together correctly, using the recommended primary API (`apply_strategy`). Includes feature generation and strategy integration tests, legacy feature config compatibility tests, multi-feature type tests, and an end-to-end test that generates result files. This properly integrated pytest test replaces the standalone integration_test.py that previously existed in the project root.
     - `test_backtester.py` — Comprehensive tests for src/backtester.py, covering both basic and enhanced backtesting functionality with 22 tests for position tracking, trade execution, portfolio valuation, and analytics.
     - `test_metrics.py` — Tests for src/metrics.py, including 16 comprehensive tests covering basic return calculations, edge cases, error handling, and console output formatting.
@@ -36,6 +37,12 @@ This document describes the directory structure for the Simple Stock Strategy Ba
         - `test_data_loader.py.md` — Documentation for tests/test_data_loader.py.
         - `test_feature_generator.py.md` — Documentation for tests/test_feature_generator.py.
         - `test_integration.py.md` — Documentation for tests/test_integration.py.
+        - `test_config_parser.py.md` — Documentation for tests/test_config_parser.py.
+        - `test_strategies.py.md` — Documentation for tests/test_strategies.py.
+        - `test_apply_strategy.py.md` — Documentation for tests/test_apply_strategy.py.
+        - `test_strategy_pattern.py.md` — Documentation for tests/test_strategy_pattern.py.
+        - `test_backtester.py.md` — Documentation for tests/test_backtester.py.
+        - `test_metrics.py.md` — Documentation for tests/test_metrics.py.
 
 ## File Descriptions
 
