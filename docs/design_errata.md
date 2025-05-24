@@ -73,3 +73,35 @@ The current implementation includes these important behaviors not mentioned in t
 3. **Advanced Error Handling**: Robust input validation and error handling ensure graceful failure with informative error messages.
 
 For implementation details, usage examples, and API reference, please consult the updated documentation in `docs/src/feature_generator.py.md` and the example usage in `docs/codebase_overview.md`.
+
+## DOC-004: `strategies.py` - Return Types and Selection Mechanism
+
+**Category:** Documentation Mismatch (Design vs. Implementation)
+**Affected Documents:** docs/design.md (Section 4.5) vs. src/strategies.py, docs/src/strategies.py.md
+
+### Discrepancy Description
+
+The original design document (`design.md`, section 4.5) describes the `strategies.py` module with some discrepancies compared to the actual implementation:
+
+1.  **`generate_sma_crossover_signals` Return Type:**
+    *   **Design.md:** States this function returns a `pd.DataFrame`.
+    *   **Actual Implementation:** The function `generate_sma_crossover_signals` (and the `generate_signals` method of its underlying `SMACrossoverStrategy` class) returns a `pd.Series` containing the trading signals (1 for Buy, -1 for Sell, 0 for Hold).
+
+2.  **Strategy Selection Mechanism:**
+    *   **Design.md:** Suggests a simpler, potentially hardcoded or direct function call mechanism for strategy selection in `main.py` for v0.1, referring to the module containing functions as a simple form of the Strategy Pattern.
+    *   **Actual Implementation:** `src/strategies.py` implements a more formal and extensible Strategy Pattern. This includes:
+        *   A `BaseStrategy` abstract base class.
+        *   Concrete strategy classes (e.g., `SMACrossoverStrategy`) inheriting from `BaseStrategy`.
+        *   A `STRATEGY_REGISTRY` dictionary to register and discover available strategies.
+        *   An `apply_strategy` function that dynamically instantiates and uses strategy objects based on the configuration provided. This function is the primary interface for applying strategies.
+
+### Current Implementation (Accurate Documentation)
+
+For the accurate and current specification of the `strategies.py` module, including return types and the strategy selection mechanism, please refer to:
+- [docs/src/strategies.py.md](src/strategies.py.md)
+- [docs/codebase_overview.md](codebase_overview.md) (section on strategies.py and its usage)
+
+### Rationale for Evolution
+
+- **Return Type:** Returning a `pd.Series` for signals is more direct and semantically correct, as it represents a single vector of actions aligned with the DataFrame's index. The `backtester.py` module is designed to consume this `pd.Series` directly.
+- **Strategy Pattern:** Implementing a full Strategy Pattern from the outset, even for a single initial strategy, provides a much more scalable and maintainable architecture. It allows for new strategies to be added easily by creating new classes and registering them, without modifying the core `apply_strategy` logic or the `main.py` workflow significantly. This was a proactive architectural improvement.

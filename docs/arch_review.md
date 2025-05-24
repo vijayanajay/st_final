@@ -59,6 +59,20 @@ _None at this time._
 
 **Systemic Prevention:** For future projects or major versions, establish a process where design documents are either living documents updated with implementation, or are clearly marked as "initial design" with pointers to detailed implementation docs for evolved components. If a design doc is to remain static, its limitations/deviations from the final implementation must be clearly signposted within the design document itself.
 
+**DOC-004:** Documentation Mismatch (Design vs. Implementation) in `strategies.py`.
+
+**Flaw Impact:** Medium - Developers referencing `docs/design.md` for `strategies.py`'s interface (specifically `generate_sma_crossover_signals` return type) or strategy selection mechanism will have an incomplete or misleading understanding. This could lead to incorrect usage assumptions or confusion when integrating with `main.py`.
+
+**Root Cause:** The `docs/design.md` was not fully updated when the `strategies.py` module was implemented using the Strategy Pattern and when the precise return type of signal generation functions was finalized.
+
+**Mandated Solution:**
+1. **REQUIRED** - Update `docs/design.md` (Section 4.5 and/or Section 11) to accurately reflect that `generate_sma_crossover_signals` (and underlying strategy methods) returns a `pd.Series`, not a `pd.DataFrame`.
+2. **REQUIRED** - Update `docs/design.md` (Section 4.5 and/or Section 11) to describe the implemented Strategy Pattern (`BaseStrategy`, concrete classes, `STRATEGY_REGISTRY`, `apply_strategy` function) instead of the simpler, direct function call mechanism initially envisioned.
+3. **REQUIRED** - Ensure `docs/design_errata.md` clearly details these discrepancies and points to `docs/src/strategies.py.md` as the source of truth for this module.
+4. **COMPLETED** - A new entry DOC-004 has been added to `arch_review.md` to track this issue.
+
+**Systemic Prevention:** Similar to DOC-002: For future projects or major versions, establish a process where design documents are either living documents updated with implementation, or are clearly marked as "initial design" with pointers to detailed implementation docs for evolved components. If a design doc is to remain static, its limitations/deviations from the final implementation must be clearly signposted within the design document itself.
+
 ---
 
 ## RESOLVED CRITICAL FLAWS (This Audit)

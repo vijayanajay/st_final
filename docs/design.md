@@ -417,12 +417,19 @@ The application will consist of the following Python modules:
 
 **IMPORTANT NOTICE: Implementation Discrepancy (DOC-002)**
 
-The implementation of some components in this design has evolved beyond their initial specification in this document. In particular, the `feature_generator.py` module's `generate_features` function implementation provides a more flexible feature configuration structure than initially described in Section 4.4.
+The implementation of some components in this design has evolved beyond their initial specification in this document. In particular, the `feature_generator.py` module\'s `generate_features` function implementation provides a more flexible feature configuration structure than initially described in Section 4.4.
 
-**For accurate and current information, please consult:**
-- [Design Errata and Implementation Notes](design_errata.md) - Contains details on implementation evolution
-- [Feature Generator Documentation](src/feature_generator.py.md) - Contains comprehensive API reference
-- [Codebase Overview](codebase_overview.md) - Contains up-to-date usage examples
+**IMPORTANT NOTICE: Implementation Discrepancy (DOC-004)**
+
+Similarly, the `strategies.py` module (Section 4.5) has evolved:
+*   The `generate_sma_crossover_signals` function (and underlying strategy methods) returns a `pd.Series` of signals, not a `pd.DataFrame` as originally stated.
+*   The strategy selection mechanism implemented uses a Strategy Pattern (`BaseStrategy`, `STRATEGY_REGISTRY`, `apply_strategy` function) which is more advanced than the direct function call approach initially envisioned for v0.1.
+
+**For accurate and current information on these and other components, please consult:**
+- [Design Errata and Implementation Notes](design_errata.md) - Contains details on implementation evolution for `feature_generator.py` and `strategies.py`.
+- [Feature Generator Documentation](src/feature_generator.py.md) - Contains comprehensive API reference for `feature_generator.py`.
+- [Strategies Documentation](src/strategies.py.md) - Contains comprehensive API reference for `strategies.py`.
+- [Codebase Overview](codebase_overview.md) - Contains up-to-date usage examples.
 
 The original design document is maintained as a historical reference, but the implementation and associated documentation (noted above) should be considered the source of truth.
 
